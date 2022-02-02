@@ -1,0 +1,29 @@
+# 节点配置
+NodeConfig:
+  # 节点名称配置
+  NodeNames:
+    BeeScan_node_1,
+    BeeScan_node_2,
+    BeeScan_node_3,
+    BeeScan_node_4,
+    BeeScan_node_5
+
+
+
+# 数据库配置
+DBConfig:
+  # Redis配置
+  redis:
+    host: "101.43.173.130"
+    password: ""
+    port: "5566"
+    database: "0"
+  # Elasticsearch配置
+  Elasticsearch:
+    host: "101.43.173.130"
+    port: "9205"
+    username: ""
+    password: ""
+    index: "beescan"
+
+

@@ -1,0 +1,125 @@
+.text-blue1{
+    color: #0d20f0 !important;
+}
+
+a.text-blue1:hover, a.text-blue1:focus {
+    color: #0d20f0 !important;
+}
+
+.bg-blue1{
+    background-color: #0d20f0 !important;
+}
+
+a.bg-blue1:hover, a.bg-blue1:focus,
+button.bg-blue1:hover,
+button.bg-blue1:focus {
+    background-color: #0d20f0 !important;
+}
+
+.text-pink1{
+    color: #ef0c79 !important;
+}
+
+a.text-pink1:hover, a.text-pink1:focus {
+    color: #ef0c79 !important;
+}
+
+.bg-pink1{
+    background-color: #ef0c79 !important;
+}
+
+a.bg-pink1:hover, a.bg-pink1:focus,
+button.bg-pink1:hover,
+button.bg-pink1:focus {
+    background-color: #ef0c79 !important;
+}
+
+.text-yellow1{
+    color: #ebf306 !important;
+}
+
+a.text-yellow1:hover, a.text-yellow1:focus {
+    color: #ebf306 !important;
+}
+
+.bg-yellow1{
+    background-color: #ebf306 !important;
+}
+
+a.bg-yellow1:hover, a.bg-yellow1:focus,
+button.bg-yellow1:hover,
+button.bg-yellow1:focus {
+    background-color: #ebf306 !important;
+}
+
+.text-cyan1{
+    color: #0bf6cd !important;
+}
+
+a.text-cyan1:hover, a.text-cyan1:focus {
+    color: #0bf6cd !important;
+}
+
+.bg-cyan1{
+    background-color: #0bf6cd !important;
+}
+
+a.bg-cyan1:hover, a.bg-cyan1:focus,
+button.bg-cyan1:hover,
+button.bg-cyan1:focus {
+    background-color: #0bf6cd !important;
+}
+
+.text-cyan2{
+    color: #10abab !important;
+}
+
+a.text-cyan2:hover, a.text-cyan2:focus {
+    color: #10abab !important;
+}
+
+.bg-cyan2{
+    background-color: #10abab !important;
+}
+
+a.bg-cyan2:hover, a.bg-cyan2:focus,
+button.bg-cyan2:hover,
+button.bg-cyan2:focus {
+    background-color: #10abab !important;
+}
+
+.text-purple1{
+    color: #dc04b7 !important;
+}
+
+a.text-purple1:hover, a.text-purple1:focus {
+    color: #dc04b7 !important;
+}
+
+.bg-purple1{
+    background-color: #dc04b7 !important;
+}
+
+a.bg-purple1:hover, a.bg-purple1:focus,
+button.bg-purple1:hover,
+button.bg-purple1:focus {
+    background-color: #dc04b7 !important;
+}
+
+.text-green1{
+    color: #1db905 !important;
+}
+
+a.text-green1:hover, a.text-green1:focus {
+    color: #1db905 !important;
+}
+
+.bg-green1{
+    background-color: #1db905 !important;
+}
+
+a.bg-green1:hover, a.bg-green1:focus,
+button.bg-green1:hover,
+button.bg-green1:focus {
+    background-color: #1db905 !important;
+}
