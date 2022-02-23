@@ -33,7 +33,10 @@ DBConfig:
     password: ""
     index: "beescan"
 
-
+# web端账号密码配置
+UserPassConfig:
+  UserName: admin
+  PassWord: admin
 
 
 `)

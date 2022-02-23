@@ -557,6 +557,106 @@ func QuerySort(client *elastic.Client, condition string) (int, int, int, []Port,
 	return assetsnum, ipnum, portnum, portsort, countrysort, serversort
 }
 
+func QueryToExport(client *elastic.Client, condition string) []Output {
+	var res *elastic.SearchResult
+	var count int64
+	var outs []Output
+	var err error
+
+	if condition == "" {
+		// 取所有
+		count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Do(context.Background())
+		res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Do(context.Background())
+	} else if !strings.Contains(condition, "&&") && !strings.Contains(condition, "||") && condition != "" { //单个查询条件
+
+		tmp := strings.Split(condition, "=\"")
+		key := tmp[0]
+		key = strings.Replace(key, " ", "", -1)
+		tmp2 := strings.Split(tmp[1], "\"")
+		value := strings.Replace(tmp2[0], "\"", "", -1)
+
+		if key == "body" || key == "header" || key == "title" || key == "domain" {
+			// key中包含value
+			matchquery := elastic.NewWildcardQuery(key, value)
+			count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Query(matchquery).Do(context.Background())
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Query(matchquery).Do(context.Background())
+		} else if key == "app" {
+			quert := elastic.NewQueryStringQuery(value)
+			count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Query(quert).Do(context.Background())
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Query(quert).Do(context.Background())
+		} else {
+			// 单个条件字段相等
+			keyquery := elastic.NewMatchQuery(key, value)
+			count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Query(keyquery).Do(context.Background())
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Query(keyquery).Do(context.Background())
+		}
+
+	} else if strings.Contains(condition, "&&") && !strings.Contains(condition, "||") { //and逻辑
+		tmpcondition := strings.Split(condition, " && ")
+		bollQ := elastic.NewBoolQuery()
+		for _, v := range tmpcondition {
+			tmpv1 := strings.Split(v, "=\"")
+			key := tmpv1[0]
+			key = strings.Replace(key, " ", "", -1)
+			tmpv2 := strings.Split(tmpv1[1], "\"")
+			value := strings.Replace(tmpv2[0], "\"", "", -1)
+
+			if key == "body" || key == "header" || key == "title" || key == "domain" {
+				// key中包含value
+				bollQ.Must(elastic.NewWildcardQuery(key, value))
+			} else if key == "app" {
+				bollQ.Must(elastic.NewQueryStringQuery(value))
+			} else {
+				// 单个条件字段相等
+				bollQ.Must(elastic.NewMatchQuery(key, value))
+			}
+
+		}
+		count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Query(bollQ).Do(context.Background())
+		res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Query(bollQ).Do(context.Background())
+	} else if strings.Contains(condition, "||") && !strings.Contains(condition, "&&") { //or逻辑
+		tmpcondition := strings.Split(condition, " || ")
+		bollQ := elastic.NewBoolQuery()
+		for _, v := range tmpcondition {
+			tmpv1 := strings.Split(v, "=\"")
+			key := tmpv1[0]
+			key = strings.Replace(key, " ", "", -1)
+			tmpv2 := strings.Split(tmpv1[1], "\"")
+			value := strings.Replace(tmpv2[0], "\"", "", -1)
+
+			if key == "body" || key == "header" || key == "title" || key == "domain" {
+				// key中包含value
+				bollQ.Should(elastic.NewWildcardQuery(key, value))
+			} else if key == "app" {
+				bollQ.Should(elastic.NewQueryStringQuery(value))
+			} else {
+				// 单个条件字段相等
+				bollQ.Should(elastic.NewMatchQuery(key, value))
+			}
+
+		}
+		count, err = client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Query(bollQ).Do(context.Background())
+		res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index).Size(int(count)).From(0).Query(bollQ).Do(context.Background())
+	}
+
+	if res != nil {
+		if res.Hits != nil {
+			if res.Hits.Hits != nil {
+				for _, item := range res.Hits.Hits { //从搜索结果中取数据的方法
+					out := Output{}
+					err = json.Unmarshal(item.Source, &out)
+					if err != nil {
+						log.Println(err)
+					}
+					outs = append(outs, out)
+				}
+			}
+		}
+	}
+
+	return outs
+}
+
 // QueryLogByID 节点日志查询
 func QueryLogByID(client *elastic.Client, nodename string) NodeLog {
 	var res *elastic.GetResult

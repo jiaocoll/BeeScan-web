@@ -55,11 +55,17 @@ type WorkerConfig struct {
 	Thread       int
 }
 
+type UserPassConfig struct {
+	UserName string
+	PassWord string
+}
+
 type Config struct {
-	NodeConfig   NodeConfig
-	DicConfig    DicConfig
-	WorkerConfig WorkerConfig
-	DBConfig     DBConfig
+	NodeConfig     NodeConfig
+	DicConfig      DicConfig
+	WorkerConfig   WorkerConfig
+	DBConfig       DBConfig
+	UserPassConfig UserPassConfig
 }
 
 // 加载配置
