@@ -1,6 +1,12 @@
 package util
 
 import (
+	"fmt"
+	"github.com/karrick/godirwalk"
+	"log"
+	"math/rand"
+	"os"
+	"path"
 	"sort"
 	"strings"
 )
@@ -41,4 +47,99 @@ func In(target string, strArray []string) bool {
 		return true
 	}
 	return false
+}
+
+func RandomStr(randSource *rand.Rand, letterBytes string, n int) string {
+	const (
+		letterIdxBits = 6                    // 6 bits to represent a letter index
+		letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+		letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+		//letterBytes   = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	)
+	randBytes := make([]byte, n)
+	for i, cache, remain := n-1, randSource.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = randSource.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			randBytes[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+	return string(randBytes)
+}
+
+func DirectoryWalker(fsPath string, callback func(fsPath string, d *godirwalk.Dirent) error) error {
+	err := godirwalk.Walk(fsPath, &godirwalk.Options{
+		Callback: callback,
+		ErrorCallback: func(fsPath string, err error) godirwalk.ErrorAction {
+			return godirwalk.SkipNode
+		},
+		Unsorted: true,
+	})
+
+	// directory couldn't be walked
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func IsFilePath(filePath string) (bool, error) {
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return false, err
+	}
+
+	return info.Mode().IsRegular(), nil
+}
+
+func ResolvePath(templateName string, TemplatesDirectory string) (string, error) {
+	curDirectory, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	templatePath := path.Join(curDirectory, templateName)
+	if _, err := os.Stat(templatePath); !os.IsNotExist(err) {
+		log.Printf("Found template in current directory: %s\n", templatePath)
+
+		return templatePath, nil
+	}
+
+	if TemplatesDirectory != "" {
+		templatePath := path.Join(TemplatesDirectory, templateName)
+		if _, err := os.Stat(templatePath); !os.IsNotExist(err) {
+			log.Printf("Found template in nuclei-templates directory: %s\n", templatePath)
+
+			return templatePath, nil
+		}
+	}
+
+	return "", fmt.Errorf("no such path found: %s", templateName)
+}
+
+func IsRelative(filePath string) bool {
+	if strings.HasPrefix(filePath, "/") || strings.Contains(filePath, ":\\") {
+		return false
+	}
+
+	return true
+}
+
+func ResolvePathIfRelative(f string) (string, error) {
+	var absPath string
+	var err error
+	if IsRelative(f) {
+		absPath, err = ResolvePath(f, "")
+		if err != nil {
+			return "", err
+		}
+	} else {
+		absPath = f
+	}
+	return absPath, nil
 }

@@ -1,9 +1,9 @@
 package db
 
 import (
-	"Beescan/pkg/config"
-	"Beescan/pkg/httpx"
-	"Beescan/pkg/util"
+	"Beescan/core/config"
+	"Beescan/core/httpx"
+	"Beescan/core/util"
 	"context"
 	"encoding/json"
 	"fmt"

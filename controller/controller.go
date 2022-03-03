@@ -1,12 +1,13 @@
 package controller
 
 import (
-	"Beescan/pkg/banner"
-	"Beescan/pkg/config"
-	"Beescan/pkg/db"
-	"Beescan/pkg/json"
-	"Beescan/pkg/scan/hostinfo"
-	"Beescan/pkg/util"
+	"Beescan/core/banner"
+	"Beescan/core/config"
+	"Beescan/core/db"
+	"Beescan/core/json"
+	"Beescan/core/scan/hostinfo"
+	"Beescan/core/util"
+	"Beescan/utils"
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
@@ -17,6 +18,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -94,8 +96,9 @@ func LoginPost(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	//查询数据库，如果正确跳转，否则不跳转
-	if username == "admin" && password == "admin" {
+	if username == config.GlobalConfig.UserPassConfig.UserName && password == config.GlobalConfig.UserPassConfig.PassWord {
 		c.Request.URL.Path = "/info"
+
 	}
 }
 
@@ -146,7 +149,7 @@ func AssetsGet(c *gin.Context) {
 		leftpage := currentpage
 		rightpage := currentpage + 1
 		c.HTML(http.StatusOK, "assets.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
-			"searchs": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+			"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
 			"assetsnum": assetsnum, "ipnum": ipnum, "portnum": portnum,
 			"portsort": portsort, "countrysort": countrysort, "serversort": serversort,
 		})
@@ -242,6 +245,24 @@ func AssetsGet(c *gin.Context) {
 // AssetsPost 资产展示
 func AssetsPost(c *gin.Context) {
 	c.HTML(http.StatusOK, "assets.html", gin.H{"outputs": ""})
+}
+
+// 资产导出
+func AssetsExport(c *gin.Context) {
+	searchstr := c.Query("search")
+	file, err := utils.GetdataTocsv(db.QueryToExport(es, searchstr))
+	if err != nil {
+		log.Println(err)
+	}
+	defer func() {
+		err := os.Remove("./" + file)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+	c.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", file))
+	c.Writer.Header().Add("Content-Type", "application/octet-stream")
+	c.File("./" + file)
 }
 
 // SingleAssetsDetail 单个资产详细展示

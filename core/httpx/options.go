@@ -1,6 +1,9 @@
 package httpx
 
-import "time"
+import (
+	"github.com/projectdiscovery/fastdialer/fastdialer"
+	"time"
+)
 
 /*
 创建人员：云深不知处
@@ -15,4 +18,5 @@ type HTTPOptions struct {
 	HTTPProxy        string
 	Unsafe           bool
 	DefaultUserAgent string
+	Dialer           *fastdialer.Dialer
 }

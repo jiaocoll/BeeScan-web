@@ -1,6 +1,6 @@
 package job
 
-import "Beescan/pkg/runner"
+import "Beescan/core/runner"
 
 /*
 创建人员：云深不知处
@@ -10,5 +10,5 @@ import "Beescan/pkg/runner"
 
 type Job struct {
 	Targets []*runner.Runner
-	State string
+	State   string
 }

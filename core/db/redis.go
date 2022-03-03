@@ -1,7 +1,7 @@
 package db
 
 import (
-	"Beescan/pkg/config"
+	"Beescan/core/config"
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/go-redis/redis"

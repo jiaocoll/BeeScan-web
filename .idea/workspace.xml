@@ -4,11 +4,39 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1bfd9a84-96b5-4f82-8f75-34e95101fddf" name="变更" comment="" />
+    <list default="true" id="1bfd9a84-96b5-4f82-8f75-34e95101fddf" name="变更" comment="">
+      <change afterPath="$PROJECT_DIR$/core/runner/poc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/BeeScan-web" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/BeeScan-web" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/banner/banner.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/banner/banner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/db/elasticsearch.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/db/elasticsearch.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/db/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/db/redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/httpx/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/httpx/options.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/job/job.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/job/job.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/runner/result.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/runner/result.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/runner/runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/runner/runner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/util/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/util.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/handler/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/routers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/assets.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/assets.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/assets.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
@@ -21,14 +49,20 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="259Kk4mcupggKdfywZNKfE5u9gc" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.format.on.save.advertiser.fired" value="true" />
     <property name="go.formatter.settings.were.checked" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
@@ -37,9 +71,26 @@
     <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/core/runner" />
+      <recent name="$PROJECT_DIR$/core/poc" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

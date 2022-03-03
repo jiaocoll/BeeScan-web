@@ -2,7 +2,7 @@ package routers
 
 import (
 	"Beescan/controller"
-	"Beescan/pkg/log"
+	"Beescan/core/log"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,6 +43,9 @@ func SetupRouter() *gin.Engine {
 	// 资产展示
 	r.GET("/assets", controller.AssetsGet)
 	r.POST("/assets", controller.AssetsPost)
+
+	// 资产导出
+	r.GET("/csv", controller.AssetsExport)
 
 	// 资产探测
 	r.GET("/scan", controller.ScanGet)
