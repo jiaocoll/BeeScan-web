@@ -5,6 +5,7 @@ import (
 	"Beescan/core/config"
 	"Beescan/core/db"
 	"Beescan/core/json"
+	"Beescan/core/runner"
 	"Beescan/core/scan/hostinfo"
 	"Beescan/core/util"
 	"Beescan/utils"
@@ -66,6 +67,10 @@ type Domain struct {
 	Domainstr string
 }
 
+type VulName struct {
+	VulNamestr string
+}
+
 func init() {
 	banner.Banner()
 	fmt.Fprintln(color.Output, color.HiMagentaString("Initializing......"))
@@ -98,7 +103,6 @@ func LoginPost(c *gin.Context) {
 	//查询数据库，如果正确跳转，否则不跳转
 	if username == config.GlobalConfig.UserPassConfig.UserName && password == config.GlobalConfig.UserPassConfig.PassWord {
 		c.Request.URL.Path = "/info"
-
 	}
 }
 
@@ -353,7 +357,6 @@ func SingleAssetsDetail(c *gin.Context) {
 
 // ScanGet 资产探测
 func ScanGet(c *gin.Context) {
-
 	nodesstate = db.GetNodeStates(conn, config.GlobalConfig.NodeConfig.NodeNames)
 	tasksstate = db.GetTaskStates(conn, tasknames)
 	var tasks int
@@ -487,12 +490,157 @@ func TaskDelete(c *gin.Context) {
 
 // VulGet 漏洞检测
 func VulGet(c *gin.Context) {
-	c.HTML(http.StatusOK, "vul.html", nil)
+	var leftpages []Page
+	var rightpages []Page
+	searchstr := c.Query("search")
+	page := c.Query("page")
+	if searchstr != "" && page == "" {
+		outputs := db.QueryVul(es, searchstr, 10, 1)
+		if outputs != nil {
+			for i := 2; i < 11; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+		currentpage := 1
+		leftpage := currentpage
+		rightpage := currentpage + 1
+		c.HTML(http.StatusOK, "vul.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
+			"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+		})
+	} else if searchstr != "" && page != "" {
+		condition := searchstr
+		searchpage, _ := strconv.Atoi(page)
+		outputs := db.QueryVul(es, condition, 10, searchpage)
+
+		if searchpage > 0 && searchpage <= 5 {
+			for i := 1; i < searchpage; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				leftpages = append(leftpages, a)
+			}
+			for i := searchpage + 1; i < 11; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+
+		if searchpage > 5 {
+			for i := searchpage - 4; i < searchpage; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				leftpages = append(leftpages, a)
+			}
+			for i := searchpage + 1; i < searchpage+6; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+		leftpage := searchpage - 1
+		rightpage := searchpage + 1
+		c.HTML(http.StatusOK, "vul.html", gin.H{
+			"outputs": outputs, "currentpage": searchpage, "leftpage": leftpage, "rightpage": rightpage,
+			"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+		})
+	} else if searchstr == "" && page != "" {
+		searchpage, _ := strconv.Atoi(page)
+
+		outputs := db.QueryVul(es, "", 10, searchpage)
+		if searchpage > 0 && searchpage <= 5 {
+			for i := 1; i < searchpage; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				leftpages = append(leftpages, a)
+			}
+			for i := searchpage + 1; i < 11; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+
+		if searchpage > 5 {
+			for i := searchpage - 4; i < searchpage; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				leftpages = append(leftpages, a)
+			}
+			for i := searchpage + 1; i < searchpage+6; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+		leftpage := searchpage - 1
+		rightpage := searchpage + 1
+		c.HTML(http.StatusOK, "vul.html", gin.H{"outputs": outputs, "currentpage": searchpage, "leftpage": leftpage, "rightpage": rightpage,
+			"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+		})
+	} else if searchstr == "" && page == "" {
+		outputs := db.QueryVul(es, "", 10, 1)
+		if outputs != nil {
+			for i := 2; i < 11; i++ {
+				a := Page{NowPage: i, SearchStr: searchstr}
+				rightpages = append(rightpages, a)
+			}
+		}
+		currentpage := 1
+		leftpage := 1
+		rightpage := 1
+		c.HTML(http.StatusOK, "vul.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
+			"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+		})
+	}
 }
 
 // VulPost 漏洞检测
 func VulPost(c *gin.Context) {
-	c.HTML(http.StatusOK, "vul.html", nil)
+
+	TaskName := c.PostForm("task_vul_name") //任务名称
+	Rule := c.PostForm("search_rule")       //资产规则
+	go func() {
+		//根据规则搜索对应资产
+		ouputs := db.QueryToExport(es, Rule)
+		var targets []string
+		for _, v := range ouputs {
+			targets = append(targets, v.Target)
+		}
+
+		//创建扫描实例进行扫描
+		r := runner.NewRunner(TaskName, targets)
+		r.ParsePocs()
+		vuloutput := r.RunPoc()
+		for i := 0; i < len(vuloutput); i++ {
+			vul := <-vuloutput
+			db.EsAdd(es, vul)
+		}
+	}()
+
+	var leftpages []Page
+	var rightpages []Page
+	searchstr := c.Query("search")
+	outputs := db.QueryVul(es, searchstr, 10, 1)
+	if outputs != nil {
+		for i := 2; i < 11; i++ {
+			a := Page{NowPage: i, SearchStr: searchstr}
+			rightpages = append(rightpages, a)
+		}
+	}
+	currentpage := 1
+	leftpage := currentpage
+	rightpage := currentpage + 1
+	c.HTML(http.StatusOK, "assets.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
+		"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
+	})
+
+}
+
+// VulDetail 单个目标漏洞详情
+func VulDetail(c *gin.Context) {
+	var vuls []VulName
+	id := c.Query("detail")
+	output, vulsstr := db.QueryVulByID(es, id)
+	for _, v := range vulsstr {
+		tmpvul := VulName{
+			VulNamestr: v,
+		}
+		vuls = append(vuls, tmpvul)
+	}
+	c.HTML(http.StatusOK, "vuldetail.html", gin.H{"output": output, "vuls": vuls})
 }
 
 // PocGet POC管理
@@ -548,8 +696,8 @@ func LogsGet(c *gin.Context) {
 	if nodesstate == nil {
 		nodesstate = db.GetNodeStates(conn, config.GlobalConfig.NodeConfig.NodeNames)
 	}
-	if config.Exists("BeeScanLog-Web.log") {
-		logs, err = ioutil.ReadFile("BeeScanLog-Web.log")
+	if config.Exists("BeeScan.log") {
+		logs, err = ioutil.ReadFile("BeeScan.log")
 		if err != nil {
 			log.Println(err)
 		}
@@ -560,9 +708,9 @@ func LogsGet(c *gin.Context) {
 
 // NodeLog 日志管理
 func NodeLog(c *gin.Context) {
-	nodename := c.Query("nodelog")
+	nodename := c.Query("node")
 	TheNodeLog := db.QueryLogByID(es, nodename)
-	c.HTML(http.StatusOK, "logs.html", gin.H{"NodeLog": TheNodeLog, "NodeName": nodename})
+	c.HTML(http.StatusOK, "nodelog.html", gin.H{"NodeLog": TheNodeLog, "NodeName": nodename})
 }
 
 // InfoInit 本机信息初始化

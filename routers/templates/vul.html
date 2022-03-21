@@ -70,56 +70,9 @@
                                             <hr>
                                             <h5 >指定资产匹配规则</h5>
                                             <input class="form-control border-0 shadow form-control-lg" id="search_rule" name="search_rule" placeholder='domain="BeeScan.com" && title="BeeScan"'>
-                                            <hr>
-                                            <h5 >指定POC</h5>
-                                            <select class="custom-select roundy custom-select-lg shadow text-center" id="select_ports" onchange="Optionchange()">
-                                                <option id="通用POC">通用POC</option>
-                                                <option id="全部漏洞" >全部漏洞</option>
-                                                <option id="自定义POC">自定义POC</option>
-                                            </select>
                                         </div>
                                         <button type="submit" class="btn btn-primary shadow px-5">新建任务</button>
                                     </form>
-                                </div>
-                                <div class="col-7" style="float: right;margin-right: auto">
-                                    <table class="table table-striped card-text text-center">
-                                        <thead>
-                                        <tr>
-                                            <th>任务名称</th>
-                                            <th>总目标数</th>
-                                            <th>扫描进度</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>test</td>
-                                            <td>100</td>
-                                            <td>
-                                                <div class="progress progress-striped active bg-gray-400">
-                                                    <div class="progress-bar bg-pink1" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">50%</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>test1</td>
-                                            <td>100</td>
-                                            <td>
-                                                <div class="progress progress-striped active bg-gray-400">
-                                                    <div class="progress-bar bg-pink1" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">50%</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>test2</td>
-                                            <td>100</td>
-                                            <td>
-                                                <div class="progress progress-striped active bg-gray-400">
-                                                    <div class="progress-bar bg-pink1" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">50%</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
                                 </div>
 
                             </div>
@@ -145,40 +98,33 @@
                                         <th>检测目标</th>
                                         <th>扫描时间</th>
                                         <th>漏洞名称</th>
+                                        <th>漏洞链接</th>
                                         <th>漏洞详情</th>
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    {{range .outputs}}
                                     <tr>
-                                        <td>test</td>
-                                        <td>192.168.10.116</td>
-                                        <td>2022-1-11 22:07:10</td>
-                                        <td class="text-pink1">SQL注入</td>
-                                        <td><a href="#" class="fas fa-eye rounded shadow text-info">查看</a></td>
+                                        <td>{{.TaskName}}</td>
+                                        <td>{{.Target}}</td>
+                                        <td>{{.LastTime}}</td>
+                                        <td class="text-pink1">{{.PocName}}</td>
+                                        <td><a href="{{.PocLink}}" target="_blank">{{.PocLink}}</a>></td>
+                                        <td><a href="/vuldetail?detail={{.ID}}" class="fas fa-eye rounded shadow text-info" target="_blank">查看</a></td>
                                     </tr>
-                                    <tr>
-                                        <td>test</td>
-                                        <td>192.168.10.116</td>
-                                        <td>2022-1-11 22:07:10</td>
-                                        <td class="text-pink1">SQL注入</td>
-                                        <td><a href="#" class="fas fa-eye rounded shadow text-info">查看</a></td>
-                                    </tr>
+                                    {{end}}
                                     </tbody>
                                 </table>
                                 <div class="col-md-12 page-icon" >
-                                    <a href="?page=5"><</a>
-                                    <a href="?page=1">1</a>
-                                    <a href="?page=2">2</a>
-                                    <a href="?page=3">3</a>
-                                    <a href="?page=4">4</a>
-                                    <a href="?page=5" class="text-muted text-red">5</a>
-                                    <a href="?page=6">6</a>
-                                    <a href="?page=7">7</a>
-                                    <a href="?page=8">8</a>
-                                    <a href="?page=9">9</a>
-                                    <a href="?page=10">10</a>
-                                    <a href="?page=6">></a>
-                                    <i></i>
+                                    <a href="?search={{.searchstr}}&page={{.leftpage}}"><</a>
+                                    {{range .leftpages}}
+                                    <a href="?search={{.SearchStr}}&page={{.NowPage}}">{{.NowPage}}</a>
+                                    {{end}}
+                                    <a class="text-muted text-red">{{.currentpage}}</a>
+                                    {{range .rightpages}}
+                                    <a href="?search={{.SearchStr}}&page={{.NowPage}}">{{.NowPage}}</a>
+                                    {{end}}
+                                    <a href="?search={{.SearchStr}}&page={{.rightpage}}">></a>
                                 </div>
                             </div>
                         </div>

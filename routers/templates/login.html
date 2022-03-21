@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="/public/static/css/style.default.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="/public/static/css/custom.css">
+    <link rel="stylesheet" href="/public/static/css/video.css">
+    <link rel="stylesheet" href="/public/static/css/color.css">
     <!-- Favicon-->
     <link rel="shortcut icon" href="/public/static/img/favicon.png">
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
@@ -28,16 +30,19 @@
 </head>
 <body>
 <div class="page-holder d-flex align-items-center" >
-    <img src="/public/static/img/background.jpg" width="100%" height="100%" style="z-index:-100;position:fixed;left:0;top:0"/>
+<!--    <img src="/public/static/img/background.jpg" width="100%" height="100%" style="z-index:-100;position:fixed;left:0;top:0"/>-->
+    <video class="fullscreenvideo" id="bgvid" playsinline="" autoplay="" muted="" loop="">
+        <source src="/public/static/img/kehuan.mp4" type="video/mp4">
+    </video>
     <div class="container">
         <div class="row align-items-center py-5">
             <div class="col-5 col-lg-4 mx-auto mb-5 mb-lg-0">
                 <div class="pr-lg-4"><img src="/public/static/img/loginbee.svg" alt="" class="img-fluid"></div>
             </div>
             <div class="col-lg-5 px-lg-4">
-                <h1 class="text-base text-primary text-uppercase mb-4">Cyberspace Asset Detection</h1>
-                <h2 class="mb-4">Welcome Use BeeScan!</h2>
-                <p class="text-muted text-black-50">Detect target survival and port opening, and conduct simple vulnerability test at the same time.</p>
+                <h1 class="text-base text-pink1 text-uppercase mb-4">Cyberspace Asset Detection</h1>
+                <h2 class="mb-4 text-pink1">Welcome Use BeeScan!</h2>
+                <p class="text-muted text-red text-base">Detect target survival and port opening, and conduct simple vulnerability test at the same time.</p>
                 <form id="loginForm" action="/login" class="mt-4" method="post">
                     <div class="form-group mb-4">
                         <input type="text" name="username" placeholder="Username" class="form-control border-0 shadow form-control-lg">
@@ -48,7 +53,7 @@
                     <div class="form-group mb-4">
                         <div class="custom-control custom-checkbox">
                             <input id="customCheck1" type="checkbox" checked class="custom-control-input">
-                            <label for="customCheck1" class="custom-control-label">Remember Me</label>
+                            <label for="customCheck1" class="custom-control-label text-pink1">Remember Me</label>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary shadow px-5">Login</button>

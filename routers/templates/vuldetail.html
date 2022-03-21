@@ -38,16 +38,21 @@
 </header>
 <div class="d-flex align-items-stretch">
     <div id="sidebar" class="sidebar py-3">
-        <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family text-center">MAIN</div>
-        <ul class="sidebar-menu list-unstyled ">
-            <li class="sidebar-list-item"><a href="/info" class="sidebar-link text-muted"><i class="o-imac-screen-1 mr-3 text-gray"></i><span>本机信息</span></a></li>
-            <li class="sidebar-list-item"><a href="/assets" class="sidebar-link text-muted " ><i class="o-sales-up-1 mr-3 text-gray"></i><span>资产展示</span></a></li>
-            <li class="sidebar-list-item"><a href="/scan" class="sidebar-link text-muted "><i class="o-table-content-1 mr-3 text-gray"></i><span>目标扫描</span></a></li>
-            <li class="sidebar-list-item"><a href="/vul" class="sidebar-link text-muted"><i class="fas fa-bug mr-3 text-gray"></i><span>漏洞检测</span></a></li>
-            <li class="sidebar-list-item"><a href="/poc" class="sidebar-link text-muted"><i class="o-settings-window-1 mr-3 text-gray"></i><span>POC管理</span></a></li>
-            <li class="sidebar-list-item"><a href="/logs" class="sidebar-link text-muted"><i class="o-letter-1 mr-3 text-gray"></i><span>日志管理</span></a></li>
-            <li class="sidebar-list-item"><a href="/login" class="sidebar-link text-muted "><i class="o-exit-1 mr-3 text-gray"></i><span>Login</span></a></li>
-        </ul>
+        <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family text-center">概要</div>
+        <div class=" text-uppercase px-3 px-lg-4 py-4 font-weight-bold  headings-font-family text-center h4">概要</div>
+        <hr class="bg-cyan1">
+        <div style="float: left;margin-left: 10px">最近更新:{{.output.LastTime}}</div>
+        <br>
+        <hr class="bg-cyan1">
+        <div style="float: left;margin-left: 10px">关联漏洞:</div>
+        <br>
+        <div style="float: left;margin-left: 22px">
+            <ul class="list-unstyled list-inline text-purple1">
+                {{range .vuls}}
+                <li class="py-1">{{.VulNamestr}}</li>
+                {{end}}
+            </ul>
+        </div>
     </div>
     <div class="page-holder w-100 d-flex flex-wrap">
         <div class="container-fluid px-xl-5">
@@ -56,33 +61,10 @@
                     <div class="col-lg-12 py-5">
                         <div class="card">
                             <div class="h5 card-header">
-                                <a href="/vul" class="btn btn-md btn-violet shadow " style="margin-left: auto"><i class="fas fa-arrow-left">返回</i></a>
                                 <h5 class="text-center" style="margin-top: -25px">漏洞详情</h5>
                             </div>
                             <div class="card-body">
-                                <pre class="col-lg-12 rounded shadow bg-gray-100 pre-scrollable">sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdassadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdassadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdas
-sadasdassadasdas
-                                </pre>
+                                <pre class="col-lg-12 rounded shadow bg-gray-100 pre-scrollable">{{.output.PocDescription}}</pre>
                             </div>
                         </div>
                     </div>

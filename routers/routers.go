@@ -18,6 +18,7 @@ import (
 func SetupRouter() *gin.Engine {
 
 	r := gin.Default()
+
 	r.Use(log.LoggerToFile())
 
 	// 告诉gin框架模板文件引用的静态文件去哪里找
@@ -28,7 +29,6 @@ func SetupRouter() *gin.Engine {
 	r.LoadHTMLGlob("../routers/templates/*")
 	//t := template.Must(template.New("").ParseFS(content, "templates/*"))
 	//r.SetHTMLTemplate(t)
-
 	// 初始访问
 	r.GET("/", controller.LoginGet)
 
@@ -58,6 +58,9 @@ func SetupRouter() *gin.Engine {
 	// 漏洞检测
 	r.GET("/vul", controller.VulGet)
 	r.POST("/vul", controller.VulPost)
+
+	// 漏洞详情页面
+	r.GET("/vuldetail", controller.VulDetail)
 
 	// POC管理
 	r.GET("/poc", controller.PocGet)

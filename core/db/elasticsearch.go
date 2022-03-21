@@ -3,6 +3,7 @@ package db
 import (
 	"Beescan/core/config"
 	"Beescan/core/httpx"
+	"Beescan/core/runner"
 	"Beescan/core/util"
 	"context"
 	"encoding/json"
@@ -253,7 +254,7 @@ func QueryByID(client *elastic.Client, id string) (Output, []string) {
 	return out, domains
 }
 
-// Query 搜索
+// Query 资产搜索
 func Query(client *elastic.Client, condition string, size, page int) []Output {
 	var res *elastic.SearchResult
 	var outs []Output
@@ -347,6 +348,160 @@ func Query(client *elastic.Client, condition string, size, page int) []Output {
 	}
 
 	return outs
+}
+
+// QueryVul 漏洞搜索
+func QueryVul(client *elastic.Client, condition string, size, page int) []runner.PocResult {
+	var res *elastic.SearchResult
+	var outs []runner.PocResult
+	var err error
+	if size > 0 && page > 0 {
+		if condition == "" {
+			// 取所有
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Size(size).From((page - 1) * size).Do(context.Background())
+		} else if !strings.Contains(condition, "&&") && !strings.Contains(condition, "||") && condition != "" { //单个查询条件
+
+			tmp := strings.Split(condition, "=\"")
+			key := tmp[0]
+			key = strings.Replace(key, " ", "", -1)
+			tmp2 := strings.Split(tmp[1], "\"")
+			value := strings.Replace(tmp2[0], "\"", "", -1)
+
+			if key == "TaskName" || key == "Target" || key == "PocName" || key == "PocAuthor" {
+				// key中包含value
+				matchquery := elastic.NewWildcardQuery(key, value)
+				res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(matchquery).Size(size).From((page - 1) * size).Do(context.Background())
+			} else if key == "vul" {
+				query := elastic.NewQueryStringQuery(value)
+				res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(query).Size(size).From((page - 1) * size).Do(context.Background())
+			} else {
+				// 单个条件字段相等
+				keyquery := elastic.NewMatchQuery(key, value)
+				res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(keyquery).Size(size).From((page - 1) * size).Do(context.Background())
+			}
+
+		} else if strings.Contains(condition, "&&") && !strings.Contains(condition, "||") { //and逻辑
+			tmpcondition := strings.Split(condition, " && ")
+			bollQ := elastic.NewBoolQuery()
+			for _, v := range tmpcondition {
+				tmpv1 := strings.Split(v, "=\"")
+				key := tmpv1[0]
+				key = strings.Replace(key, " ", "", -1)
+				tmpv2 := strings.Split(tmpv1[1], "\"")
+				value := strings.Replace(tmpv2[0], "\"", "", -1)
+
+				if key == "TaskName" || key == "Target" || key == "PocName" || key == "PocAuthor" {
+					// key中包含value
+					bollQ.Must(elastic.NewWildcardQuery(key, value))
+				} else if key == "vul" {
+					bollQ.Must(elastic.NewQueryStringQuery(value))
+				} else {
+					// 单个条件字段相等
+					bollQ.Must(elastic.NewMatchQuery(key, value))
+				}
+
+			}
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(bollQ).Size(size).From((page - 1) * size).Do(context.Background())
+		} else if strings.Contains(condition, "||") && !strings.Contains(condition, "&&") { //or逻辑
+			tmpcondition := strings.Split(condition, " || ")
+			bollQ := elastic.NewBoolQuery()
+			for _, v := range tmpcondition {
+				tmpv1 := strings.Split(v, "=\"")
+				key := tmpv1[0]
+				key = strings.Replace(key, " ", "", -1)
+				tmpv2 := strings.Split(tmpv1[1], "\"")
+				value := strings.Replace(tmpv2[0], "\"", "", -1)
+
+				if key == "TaskName" || key == "Target" || key == "PocName" || key == "PocAuthor" {
+					// key中包含value
+					bollQ.Should(elastic.NewWildcardQuery(key, value))
+				} else if key == "vul" {
+					bollQ.Should(elastic.NewQueryStringQuery(value))
+				} else {
+					// 单个条件字段相等
+					bollQ.Should(elastic.NewMatchQuery(key, value))
+				}
+
+			}
+			res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(bollQ).Size(size).From((page - 1) * size).Do(context.Background())
+		}
+		if res != nil {
+			if res.Hits != nil {
+				if res.Hits.Hits != nil {
+					for _, item := range res.Hits.Hits { //从搜索结果中取数据的方法
+						out := runner.PocResult{}
+						err = json.Unmarshal(item.Source, &out)
+						if err != nil {
+							log.Println(err)
+						}
+						outs = append(outs, out)
+					}
+				}
+			}
+		}
+	} else {
+		log.Println("Page error")
+	}
+
+	return outs
+}
+
+// QueryVulByID 通过id搜索
+func QueryVulByID(client *elastic.Client, id string) (runner.PocResult, []string) {
+	var res *elastic.SearchResult
+	var res2 *elastic.SearchResult
+	var vuls []string
+	var out runner.PocResult
+	var out2 runner.PocResult
+	var outs []runner.PocResult
+	var err error
+	ip := strings.Split(id, "-")
+	matchquery := elastic.NewMatchPhraseQuery("id", id)
+	matchquery2 := elastic.NewMatchPhraseQuery("target", ip[0])
+	size, err := client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(matchquery2).Do(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+	res, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(matchquery).Do(context.Background())
+	res2, err = client.Search(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Size(int(size)).From(0).Query(matchquery2).Do(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	if res != nil {
+		if res.Hits != nil {
+			if res.Hits.Hits != nil {
+				for _, item := range res.Hits.Hits { //从搜索结果中取数据的方法
+					err = json.Unmarshal(item.Source, &out)
+					if err != nil {
+						log.Println(err)
+					}
+				}
+			}
+		}
+	}
+
+	if res2 != nil {
+		if res2.Hits != nil {
+			if res2.Hits.Hits != nil {
+				for _, item := range res2.Hits.Hits { //从搜索结果中取数据的方法
+					err = json.Unmarshal(item.Source, &out2)
+					if err != nil {
+						log.Println(err)
+					}
+					outs = append(outs, out2)
+				}
+			}
+		}
+	}
+
+	for _, v := range outs {
+		if v.PocName != "" {
+			vuls = append(vuls, v.PocName)
+		}
+	}
+
+	return out, vuls
 }
 
 // QuerySort 搜索所有统计排名
@@ -662,7 +817,8 @@ func QueryLogByID(client *elastic.Client, nodename string) NodeLog {
 	var res *elastic.GetResult
 	var err error
 	var TheNodeLog NodeLog
-	res, err = client.Get().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Id(nodename + "_log").Do(context.Background())
+	id := nodename + "_log"
+	res, err = client.Get().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Id(id).Do(context.Background())
 	if err != nil {
 		log.Println(err)
 	}
@@ -678,4 +834,15 @@ func QueryLogByID(client *elastic.Client, nodename string) NodeLog {
 		}
 	}
 	return TheNodeLog
+}
+
+// EsAdd 添加结果到es数据库
+func EsAdd(client *elastic.Client, res runner.PocResult) {
+
+	// 文档件存在则更新，否则插入
+	_, err := client.Update().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Id(res.ID).Doc(res).Upsert(res).Refresh("true").Do(context.Background())
+	if err != nil {
+		log.Println("[DBEsUpInsert]:", err)
+	}
+
 }

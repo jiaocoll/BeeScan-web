@@ -4,7 +4,6 @@ import (
 	"Beescan/core/poc/nuclei"
 	"Beescan/core/poc/xray"
 	"Beescan/core/util"
-	"embed"
 	"errors"
 	"fmt"
 	"github.com/karrick/godirwalk"
@@ -13,6 +12,7 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 /*
@@ -21,25 +21,12 @@ import (
 程序功能：poc模块
 */
 
-//go:embed data2
-var PocFiles embed.FS
-
 // LoadTemplates 加载poc
 func (r *Runner) LoadTemplates(f string) []string {
 	var allTemplates []string
 	// resolve and convert relative to absolute path
 	var absPath string
 	var err error
-	//var filenames []fs.DirEntry
-	//
-	//
-	//filenames,err = PocFiles.ReadDir("data2")
-	//if err != nil{
-	//	log.Println(err)
-	//}
-	//for _, filename := range filenames{
-	//	allTemplates = append(allTemplates,filename.Name())
-	//}
 
 	if strings.Contains(f, "*") {
 		dirs := strings.Split(f, "/")
@@ -155,7 +142,7 @@ func (r *Runner) ParsePocs() int {
 }
 
 // RunPocs 运行poc
-func (r *Runner) RunPocs(target string, output chan Result) {
+func (r *Runner) RunPocs(target string, output chan PocResult) {
 	var pocs []interface{}
 	for _, poc := range r.xrayPocs {
 		pocs = append(pocs, poc)
@@ -184,17 +171,19 @@ func (r *Runner) RunPocs(target string, output chan Result) {
 					return
 				}
 
-				pocOutput := pocResult{
-					URL:            target,
+				pocOutput := PocResult{
+					ID:             target + "-" + poc.Name,
+					TaskName:       r.taskname,
+					Target:         target,
 					PocName:        poc.Name,
 					PocLink:        poc.Detail.Links,
 					PocAuthor:      poc.Detail.Author,
 					PocDescription: poc.Detail.Description,
+					LastTime:       time.Now().Format("2006-01-02 15:04:05"),
 				}
 
 				if vbool {
-					output <- &pocOutput
-					fmt.Println(pocOutput)
+					output <- pocOutput
 				}
 			case *templates.Template:
 				poc := pocInterface.(*templates.Template)
@@ -209,15 +198,17 @@ func (r *Runner) RunPocs(target string, output chan Result) {
 					name := fmt.Sprintf("%s", nameInterFace)
 					author := fmt.Sprintf("%s", authorInterFace)
 
-					pocOutput := pocResult{
-						URL:            target,
+					pocOutput := PocResult{
+						ID:             target + "-" + name,
+						TaskName:       r.taskname,
+						Target:         target,
 						PocName:        name,
 						PocLink:        []string{},
 						PocAuthor:      author,
 						PocDescription: ret2,
+						LastTime:       time.Now().Format("2006-01-02 15:04:05"),
 					}
-					output <- &pocOutput
-					fmt.Println(pocOutput)
+					output <- pocOutput
 				}
 			}
 		}(poc)

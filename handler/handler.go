@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"Beescan/msg"
 	"Beescan/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
-	"log"
+	"net/http"
 	"time"
 )
 
@@ -14,56 +14,42 @@ import (
 程序功能：中间件
 */
 
-type UserClaims struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	jwt.StandardClaims
-}
+// middleware
+func JWT() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var code int
+		var data interface{}
+		var errStr string
 
-var (
-	//token秘钥
-	secret = []byte("Beescan")
-	//该路由下不检验token
-	noVerify = []interface{}{"/", "/login"}
-	//token有效时间
-	effectTime = 2 * time.Hour
-)
+		code = msg.SuccessCode
+		token := c.Request.Header.Get("Authorization")
 
-// GenerateToken 生成Token
-func GenerateToken(claims *UserClaims) string {
-	claims.ExpiresAt = time.Now().Add(effectTime).Unix()
+		if token == "" {
+			// 非登录状态
+			code = msg.ErrCode
+			errStr = "请登录后操作"
+		} else {
+			claims, err := utils.ParseToken(token)
+			if err != nil {
+				//	token 校验不通过
+				code = msg.ErrCode
+				errStr = "身份验证失败，请重新登录"
+			} else if time.Now().Unix() > claims.ExpiresAt {
+				//	token 已过期
+				code = msg.ErrCode
+				errStr = "身份信息已过期，请重新登录"
+			}
+		}
 
-	//生成token
-	sign, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(secret)
-	if err != nil {
-		log.Println(err)
+		if code != msg.SuccessCode {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": code,
+				"msg":  errStr,
+				"data": data,
+			})
+			c.Abort()
+			return
+		}
+		c.Next()
 	}
-	return sign
-}
-
-// JwtVerify 验证Token
-func JwtVerify(c *gin.Context) {
-	//过滤是否验证token
-	if utils.IsContailArr(noVerify, c.Request.RequestURI) {
-		return
-	}
-	token := c.GetHeader("token")
-	if token == "" {
-		panic("token is not exist!")
-	}
-	c.Set("user", ParseToken(token))
-}
-
-// ParseToken 解析Token
-func ParseToken(tokenString string) *UserClaims {
-	//解析token
-	token, err := jwt.ParseWithClaims(tokenString, &UserClaims{}, func(token *jwt.Token) (interface{}, error) { return secret, nil })
-	if err != nil {
-		log.Println(err)
-	}
-	claims, ok := token.Claims.(*UserClaims)
-	if !ok {
-		log.Println("token is valid")
-	}
-	return claims
 }

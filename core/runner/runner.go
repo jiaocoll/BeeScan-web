@@ -26,10 +26,11 @@ type Runner struct {
 	xrayPocs   []*xray.Poc
 	nucleiPoCs []*templates.Template
 	pocChanel  chan string
+	taskname   string
 }
 
-func NewRunner(targets []string) *Runner {
-	runner := &Runner{}
+func NewRunner(TaskName string, targets []string) *Runner {
+	runner := &Runner{taskname: TaskName}
 
 	dialer, err := fastdialer.NewDialer(fastdialer.DefaultOptions)
 	if err != nil {
@@ -64,9 +65,10 @@ func NewRunner(targets []string) *Runner {
 	return runner
 }
 
-func (r *Runner) RunPoc() {
-	output := make(chan Result)
+func (r *Runner) RunPoc() chan PocResult {
+	output := make(chan PocResult)
 	for target := range r.pocChanel {
 		r.RunPocs(target, output)
 	}
+	return output
 }
