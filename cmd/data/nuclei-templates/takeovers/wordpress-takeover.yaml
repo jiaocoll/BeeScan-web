@@ -2,7 +2,7 @@ id: wordpress-takeover
 
 info:
   name: WordPress takeover detection
-  author: pdcommunity & geeknik
+  author: pdteam,geeknik
   severity: high
   tags: takeover,wordpress
   reference: https://github.com/EdOverflow/can-i-take-over-xyz
@@ -12,13 +12,15 @@ requests:
     path:
       - "{{BaseURL}}"
 
-    redirects: true
     matchers-condition: and
     matchers:
       - type: word
         words:
-          - 'Do you want to register'
+          - "Do you want to register"
+          - ".wordpress.com</em> doesn&#8217;t&nbsp;exist"
+        condition: and
 
-      - type: regex
-        regex:
-          - "[a-zA-Z0-9][a-zA-Z0-9-_]*\\.)*[a-zA-Z0-9]*[a-zA-Z0-9-_]*[[a-zA-Z0-9].wordpress.com"
+      - type: word
+        words:
+          - "cannot be registered"
+        negative: true

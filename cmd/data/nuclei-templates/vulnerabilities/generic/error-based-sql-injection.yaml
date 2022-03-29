@@ -5,16 +5,12 @@ info:
   author: geeknik
   severity: high
   description: Detects the possibility of SQL injection in 29 database engines. Inspired by https://github.com/sqlmapproject/sqlmap/blob/master/data/xml/errors.xml.
-  tags: sqli
+  tags: sqli,generic,error
 
 requests:
-  - raw:
-      - |
-        GET /') OR 1 = 1 -- ];
-        Host: {{Hostname}}
-        User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
-        Accept: */*
-        Connection: close
+  - method: GET
+    path:
+      - "{{BaseURL}}/'"
 
     matchers-condition: and
     matchers:

@@ -31,3 +31,5 @@ UserPassConfig:
   UserName: admin
   PassWord: admin
 
+# nuclei路径
+NucleiPath: /Users/ameng/Tools/nuclei/nuclei

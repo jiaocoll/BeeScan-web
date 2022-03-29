@@ -5,6 +5,7 @@ info:
   author: dhiyaneshDK
   severity: info
   reference: https://www.exploit-db.com/ghdb/6501
+  tags: panel,plesk,login
 
 requests:
   - method: GET
@@ -16,7 +17,7 @@ requests:
       - type: word
         words:
           - 'Plesk Onyx'
-          - 'Plesk Obsidian'
+
       - type: status
         status:
           - 200

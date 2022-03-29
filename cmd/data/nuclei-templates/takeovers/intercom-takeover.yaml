@@ -2,9 +2,9 @@ id: intercom-takeover
 
 info:
   name: intercom takeover detection
-  author: pdcommunity
+  author: pdteam
   severity: high
-  tags: takeover
+  tags: takeover,intercom
   reference: https://github.com/EdOverflow/can-i-take-over-xyz
 
 requests:
@@ -15,5 +15,6 @@ requests:
     matchers:
       - type: word
         words:
-          - This page is reserved for artistic dogs.
-          - <h1 class="headline">Uh oh. That page doesn’t exist.</h1>
+          - '<h1 class="headline">Uh oh. That page doesn\’t exist.</h1>'
+          - 'This page is reserved for artistic dogs.'
+        condition: and

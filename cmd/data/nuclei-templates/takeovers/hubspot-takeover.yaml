@@ -2,9 +2,9 @@ id: hubspot-takeover
 
 info:
   name: hubspot takeover detection
-  author: pdcommunity
+  author: pdteam
   severity: high
-  tags: takeover
+  tags: takeover,hubspot
   reference: https://github.com/EdOverflow/can-i-take-over-xyz
 
 requests:
@@ -15,5 +15,6 @@ requests:
     matchers:
       - type: word
         words:
-          - Domain not found
-          - does not exist in our system
+          - "Domain not found"
+          - "does not exist in our system"
+        condition: and

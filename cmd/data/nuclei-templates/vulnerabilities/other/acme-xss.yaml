@@ -2,8 +2,8 @@ id: acme-xss
 
 info:
   name: ACME / Let's Encrypt Reflected XSS
-  author: pd-team
-  severity: low
+  author: pdteam
+  severity: medium
   tags: xss,acme
 
 requests:
