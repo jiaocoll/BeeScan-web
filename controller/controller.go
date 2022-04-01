@@ -5,7 +5,7 @@ import (
 	"Beescan/core/config"
 	"Beescan/core/db"
 	"Beescan/core/json"
-	"Beescan/core/runner"
+	"Beescan/core/scan"
 	"Beescan/core/scan/hostinfo"
 	"Beescan/core/util"
 	"Beescan/utils"
@@ -104,6 +104,7 @@ func LoginPost(c *gin.Context) {
 	if username == config.GlobalConfig.UserPassConfig.UserName && password == config.GlobalConfig.UserPassConfig.PassWord {
 		c.Request.URL.Path = "/info"
 	}
+
 }
 
 // InfoGet 本机信息
@@ -411,9 +412,14 @@ func ScanPost(c *gin.Context) {
 			var targets string
 			targets += TaskName + ","
 			// 每一个ip和端口构成一个扫描目标,组成目标集合
-			for _, p := range Ports {
-				for _, i := range TargetsHosts {
-					targets += fmt.Sprintf("%s:%s,", i, p)
+			for k1, p := range Ports {
+				for k2, i := range TargetsHosts {
+					if k1 == len(Ports)-1 && k2 == len(TargetsHosts)-1 {
+						targets += fmt.Sprintf("%s:%s", i, p)
+					} else {
+						targets += fmt.Sprintf("%s:%s,", i, p)
+					}
+
 				}
 			}
 			tmpnum := strings.Split(targets, ",")
@@ -599,15 +605,20 @@ func VulPost(c *gin.Context) {
 		for _, v := range ouputs {
 			targets = append(targets, v.Target)
 		}
-
-		//创建扫描实例进行扫描
-		r := runner.NewRunner(TaskName, targets)
-		r.ParsePocs()
-		vuloutput := r.RunPoc()
-		for i := 0; i < len(vuloutput); i++ {
-			vul := <-vuloutput
-			db.EsAdd(es, vul)
+		scan.VulnScan(targets)
+		dirpath := util.GetCurrentDirectory()
+		filepath := dirpath + "/vulns.txt"
+		if config.Exists(filepath) {
+			err := utils.ReadLine(es, filepath, scan.UnMarshal, TaskName)
+			if err != nil {
+				log.Println("ReadLine", err)
+			}
+			err = os.Remove(filepath)
+			if err != nil {
+				log.Println("RemoveFile", err)
+			}
 		}
+
 	}()
 
 	var leftpages []Page
@@ -623,7 +634,7 @@ func VulPost(c *gin.Context) {
 	currentpage := 1
 	leftpage := currentpage
 	rightpage := currentpage + 1
-	c.HTML(http.StatusOK, "assets.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
+	c.HTML(http.StatusOK, "vul.html", gin.H{"outputs": outputs, "currentpage": currentpage, "leftpage": leftpage, "rightpage": rightpage,
 		"searchstr": searchstr, "leftpages": leftpages, "rightpages": rightpages,
 	})
 
@@ -646,47 +657,6 @@ func VulDetail(c *gin.Context) {
 // PocGet POC管理
 func PocGet(c *gin.Context) {
 	c.HTML(http.StatusOK, "poc.html", nil)
-}
-
-// PocAdd 添加POC
-func PocAdd(c *gin.Context) {
-	file, err := c.FormFile("pocfile")
-	if file != nil {
-		if err != nil {
-			c.HTML(http.StatusOK, "poc.html", gin.H{
-				"uploadfilemsg": err,
-			})
-		}
-		files := strings.Split(file.Filename, ".")
-		if files[1] != "yaml" {
-			c.HTML(http.StatusOK, "poc.html", gin.H{
-				"uploadfilemsg": "上传失败文件格式不正确！",
-			})
-		} else {
-			c.HTML(http.StatusOK, "poc.html", gin.H{"uploadfilemsg": "上传成功！"})
-		}
-	}
-}
-
-// PocDelete 删除POC
-func PocDelete(c *gin.Context) {
-	pocid := c.PostForm("delete_poc")
-	if pocid != "" {
-		c.HTML(http.StatusOK, "poc.html", gin.H{"deletepocmsg": "已删除" + pocid + "!"})
-	} else {
-		c.Request.URL.Path = "/poc"
-		c.HTML(http.StatusOK, "poc.html", gin.H{"deletepocmsg": pocid + "删除失败!"})
-	}
-}
-
-// PocSearch 搜索POC
-func PocSearch(c *gin.Context) {
-	searchkey := c.PostForm("search_key")
-	if searchkey != "" {
-		c.HTML(http.StatusOK, "poc.html", nil)
-	} else {
-		c.HTML(http.StatusOK, "poc.html", nil)
-	}
 }
 
 // LogsGet 日志管理
