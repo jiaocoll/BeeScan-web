@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1bfd9a84-96b5-4f82-8f75-34e95101fddf" name="变更" comment="">
+      <change beforePath="$PROJECT_DIR$/cmd/BeeScan-web" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/BeeScan-web" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/banner/banner.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/banner/banner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/config/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/config/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/db/elasticsearch.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/db/elasticsearch.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/json/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/json/json.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/scan/hostinfo/host_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/scan/hostinfo/host_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/scan/vulnscan.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/scan/vulnscan.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/util/GetCurrentPath.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/GetCurrentPath.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/util/iputil.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/iputil.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/util/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/core/util/util.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/middleware/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers/routers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/static/js/uploadfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/routers/static/js/uploadfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/assets.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/assets.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/info.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/info.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/logs.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/logs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/nodelog.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/nodelog.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/poc.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/poc.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/scan.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/scan.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/vul.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/vul.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/templates/vuldetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/routers/templates/vuldetail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/ReadFile.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/ReadFile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/jwt.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/cmd/BeeScan.go" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/go.mod" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/github.com/projectdiscovery/nuclei/v2@v2.6.0/pkg/templates/workflows.go" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/test.go" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/go/pkg/mod/github.com/projectdiscovery/nuclei/v2@v2.6.0/pkg/templates/compile.go" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="259Kk4mcupggKdfywZNKfE5u9gc" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.format.on.save.advertiser.fired" value="true" />
+    <property name="go.formatter.settings.were.checked" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.vendoring.notification.had.been.shown" value="true" />
+    <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/utils" />
+      <recent name="$PROJECT_DIR$/routers/static/img" />
+      <recent name="$PROJECT_DIR$/static/css" />
+      <recent name="$PROJECT_DIR$/cmd" />
+      <recent name="$PROJECT_DIR$/core/runner" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="BeeScan-web" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="BeeScan-web" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+</project>

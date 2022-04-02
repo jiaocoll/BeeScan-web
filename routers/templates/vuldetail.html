@@ -32,16 +32,16 @@
 <body>
 <!-- navbar-->
 <header class="header">
-    <nav class="navbar navbar-expand-lg px-4 py-4 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="/info" class="navbar-brand font-weight-bold text-uppercase text-base"><h3>BEESCAN</h3></a>
+    <nav class="navbar navbar-expand-lg px-4 py-4 bg-white shadow"><a href="#" class="text-red mr-4 mr-lg-5 lead"><i class="fas fa-flag text-pink1"></i></a><a href="/info" class="navbar-brand font-weight-bold text-uppercase text-base"><h3>BEESCAN</h3></a>
         <ul class="ml-auto d-flex align-items-center list-unstyled mb-0"></ul>
     </nav>
 </header>
 <div class="d-flex align-items-stretch">
     <div id="sidebar" class="sidebar py-3">
-        <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family text-center">概要</div>
         <div class=" text-uppercase px-3 px-lg-4 py-4 font-weight-bold  headings-font-family text-center h4">概要</div>
         <hr class="bg-cyan1">
-        <div style="float: left;margin-left: 10px">最近更新:{{.output.LastTime}}</div>
+        <div style="float: left;margin-left: 10px">最近更新:{{.output.Timestamp}}</div>
+        <br>
         <br>
         <hr class="bg-cyan1">
         <div style="float: left;margin-left: 10px">关联漏洞:</div>
@@ -58,13 +58,51 @@
         <div class="container-fluid px-xl-5">
             <section class="py-5">
                 <div class="row">
-                    <div class="col-lg-12 py-5">
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="h5 card-header">
-                                <h5 class="text-center" style="margin-top: -25px">漏洞详情</h5>
+                                <h3 class="text-center">漏洞详情</h3>
                             </div>
                             <div class="card-body">
-                                <pre class="col-lg-12 rounded shadow bg-gray-100 pre-scrollable">{{.output.PocDescription}}</pre>
+                                <br>
+                                <table class="table card-text text-center shadow table-borderless rounded">
+                                    <tbody >
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">目标</th>
+                                        <th class="col-2">{{.output.Host}}</th>
+                                    </tr>
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">任务名称</th>
+                                        <th class="col-2">{{.output.TaskName}}</th>
+                                    </tr>
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">漏洞名称</th>
+                                        <th class="col-2 text-blue1">{{.output.Info.Name}}</th>
+                                    </tr>
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">POC链接</th>
+                                        <th class="col-2"><a class="text-cyan2" href="{{.output.TemplateURL}}" target="_blank">{{.output.TemplateURL}}</a></th>
+                                    </tr>
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">漏洞等级</th>
+                                        <th class="col-2 text-red">{{.output.Info.Severity}}</th>
+                                    </tr>
+                                    <tr class="table-bordered">
+                                        <th class="bg-gray-200 col-1">参考链接</th>
+                                        <th class="col-2">
+                                            {{range .output.Info.Reference}}
+                                            <a href="{{.}}" target="_blank" class="text-cyan2">{{.}}</a>
+                                            {{end}}
+                                        </th>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <hr>
+                                <br>
+                                <h5>漏洞描述:</h5>
+                                <br>
+                                <pre class="col-lg-12 rounded shadow bg-gray-100 pre-scrollable">{{.output.Info.Description}}</pre>
                             </div>
                         </div>
                     </div>

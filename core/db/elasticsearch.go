@@ -3,7 +3,7 @@ package db
 import (
 	"Beescan/core/config"
 	"Beescan/core/httpx"
-	"Beescan/core/runner"
+	"Beescan/core/scan"
 	"Beescan/core/util"
 	"context"
 	"encoding/json"
@@ -338,7 +338,9 @@ func Query(client *elastic.Client, condition string, size, page int) []Output {
 						if err != nil {
 							log.Println(err)
 						}
-						outs = append(outs, out)
+						if out.Target != "" {
+							outs = append(outs, out)
+						}
 					}
 				}
 			}
@@ -351,9 +353,9 @@ func Query(client *elastic.Client, condition string, size, page int) []Output {
 }
 
 // QueryVul 漏洞搜索
-func QueryVul(client *elastic.Client, condition string, size, page int) []runner.PocResult {
+func QueryVul(client *elastic.Client, condition string, size, page int) []scan.NucleiOutput {
 	var res *elastic.SearchResult
-	var outs []runner.PocResult
+	var outs []scan.NucleiOutput
 	var err error
 	if size > 0 && page > 0 {
 		if condition == "" {
@@ -429,12 +431,14 @@ func QueryVul(client *elastic.Client, condition string, size, page int) []runner
 			if res.Hits != nil {
 				if res.Hits.Hits != nil {
 					for _, item := range res.Hits.Hits { //从搜索结果中取数据的方法
-						out := runner.PocResult{}
+						out := scan.NucleiOutput{}
 						err = json.Unmarshal(item.Source, &out)
 						if err != nil {
 							log.Println(err)
 						}
-						outs = append(outs, out)
+						if out.Template != "" {
+							outs = append(outs, out)
+						}
 					}
 				}
 			}
@@ -447,17 +451,17 @@ func QueryVul(client *elastic.Client, condition string, size, page int) []runner
 }
 
 // QueryVulByID 通过id搜索
-func QueryVulByID(client *elastic.Client, id string) (runner.PocResult, []string) {
+func QueryVulByID(client *elastic.Client, id string) (scan.NucleiOutput, []string) {
 	var res *elastic.SearchResult
 	var res2 *elastic.SearchResult
 	var vuls []string
-	var out runner.PocResult
-	var out2 runner.PocResult
-	var outs []runner.PocResult
+	var out scan.NucleiOutput
+	var out2 scan.NucleiOutput
+	var outs []scan.NucleiOutput
 	var err error
-	ip := strings.Split(id, "-")
+	host := strings.Split(id, "-")
 	matchquery := elastic.NewMatchPhraseQuery("id", id)
-	matchquery2 := elastic.NewMatchPhraseQuery("target", ip[0])
+	matchquery2 := elastic.NewMatchPhraseQuery("target", host[1])
 	size, err := client.Count().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Query(matchquery2).Do(context.Background())
 	if err != nil {
 		log.Println(err)
@@ -496,8 +500,8 @@ func QueryVulByID(client *elastic.Client, id string) (runner.PocResult, []string
 	}
 
 	for _, v := range outs {
-		if v.PocName != "" {
-			vuls = append(vuls, v.PocName)
+		if v.Info.Name != "" {
+			vuls = append(vuls, v.Info.Name)
 		}
 	}
 
@@ -596,7 +600,9 @@ func QuerySort(client *elastic.Client, condition string) (int, int, int, []Port,
 					if err != nil {
 						log.Println(err)
 					}
-					outs = append(outs, out)
+					if out.Target != "" {
+						outs = append(outs, out)
+					}
 				}
 			}
 		}
@@ -611,68 +617,70 @@ func QuerySort(client *elastic.Client, condition string) (int, int, int, []Port,
 	var ips []string
 
 	// 统计、排序
-	for _, v := range outs {
-		ips = append(ips, v.Ip)
-		portnum++
-		if v.Webbanner.Header != "" {
-			assetsnum++
-		}
-		tmpport := Port{Port: v.Port, Num: 1}
-		tmpcountry := Country{Country: v.Country, Num: 1}
-		tmpserver := Server{Server: v.Servername, Num: 1}
+	if len(outs) != 0 {
+		for _, v := range outs {
+			ips = append(ips, v.Ip)
+			portnum++
+			if v.Webbanner.Header != "" {
+				assetsnum++
+			}
+			tmpport := Port{Port: v.Port, Num: 1}
+			tmpcountry := Country{Country: v.Country, Num: 1}
+			tmpserver := Server{Server: v.Servername, Num: 1}
 
-		if v.Port != "" {
-			// 端口集合
-			if len(portsort) == 0 {
-				portsort = append(portsort, tmpport)
-			} else {
-				for i := 0; i < len(portsort); i++ {
-					if tmpport.Port == portsort[i].Port {
-						portsort[i].Num++
-						tmpport.Num--
-					} else if i == len(portsort)-1 && tmpport.Num == 1 {
-						portsort = append(portsort, tmpport)
-						tmpport.Num--
-						break
+			if v.Port != "" {
+				// 端口集合
+				if len(portsort) == 0 {
+					portsort = append(portsort, tmpport)
+				} else {
+					for i := 0; i < len(portsort); i++ {
+						if tmpport.Port == portsort[i].Port {
+							portsort[i].Num++
+							tmpport.Num--
+						} else if i == len(portsort)-1 && tmpport.Num == 1 {
+							portsort = append(portsort, tmpport)
+							tmpport.Num--
+							break
+						}
 					}
 				}
 			}
-		}
-		if v.Country != "" {
-			// 国家集合
-			if len(countrysort) == 0 {
-				countrysort = append(countrysort, tmpcountry)
-			} else {
-				for i := 0; i < len(countrysort); i++ {
-					if tmpcountry.Country == countrysort[i].Country {
-						countrysort[i].Num++
-						tmpcountry.Num--
-					} else if i == len(countrysort)-1 && tmpcountry.Num == 1 {
-						countrysort = append(countrysort, tmpcountry)
-						tmpcountry.Num--
-						break
+			if v.Country != "" {
+				// 国家集合
+				if len(countrysort) == 0 {
+					countrysort = append(countrysort, tmpcountry)
+				} else {
+					for i := 0; i < len(countrysort); i++ {
+						if tmpcountry.Country == countrysort[i].Country {
+							countrysort[i].Num++
+							tmpcountry.Num--
+						} else if i == len(countrysort)-1 && tmpcountry.Num == 1 {
+							countrysort = append(countrysort, tmpcountry)
+							tmpcountry.Num--
+							break
+						}
 					}
 				}
 			}
-		}
-		if v.Servername != "" {
-			// 服务集合
-			if len(serversort) == 0 {
-				serversort = append(serversort, tmpserver)
-			} else {
-				for i := 0; i < len(serversort); i++ {
-					if tmpserver.Server == serversort[i].Server {
-						serversort[i].Num++
-						tmpserver.Num--
-					} else if i == len(serversort)-1 && tmpserver.Num == 1 {
-						serversort = append(serversort, tmpserver)
-						tmpserver.Num--
-						break
+			if v.Servername != "" {
+				// 服务集合
+				if len(serversort) == 0 {
+					serversort = append(serversort, tmpserver)
+				} else {
+					for i := 0; i < len(serversort); i++ {
+						if tmpserver.Server == serversort[i].Server {
+							serversort[i].Num++
+							tmpserver.Num--
+						} else if i == len(serversort)-1 && tmpserver.Num == 1 {
+							serversort = append(serversort, tmpserver)
+							tmpserver.Num--
+							break
+						}
 					}
 				}
 			}
-		}
 
+		}
 	}
 
 	// 端口排序（从大到小）
@@ -818,7 +826,7 @@ func QueryLogByID(client *elastic.Client, nodename string) NodeLog {
 	var err error
 	var TheNodeLog NodeLog
 	id := nodename + "_log"
-	res, err = client.Get().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index).Id(id).Do(context.Background())
+	res, err = client.Get().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_log").Id(id).Do(context.Background())
 	if err != nil {
 		log.Println(err)
 	}
@@ -837,7 +845,7 @@ func QueryLogByID(client *elastic.Client, nodename string) NodeLog {
 }
 
 // EsAdd 添加结果到es数据库
-func EsAdd(client *elastic.Client, res runner.PocResult) {
+func EsAdd(client *elastic.Client, res scan.NucleiOutput) {
 
 	// 文档件存在则更新，否则插入
 	_, err := client.Update().Index(config.GlobalConfig.DBConfig.Elasticsearch.Index + "_vul").Id(res.ID).Doc(res).Upsert(res).Refresh("true").Do(context.Background())

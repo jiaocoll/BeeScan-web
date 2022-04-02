@@ -13,6 +13,12 @@ import (
 	"time"
 )
 
+/*
+创建人员：云深不知处
+创建时间：2022/1/15
+程序功能：获取本机信息
+*/
+
 // 分区
 type Part struct {
 	Path        string  `json:"path"`

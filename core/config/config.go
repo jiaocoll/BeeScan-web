@@ -15,7 +15,7 @@ import (
 /*
 创建人员：云深不知处
 创建时间：2022/1/16
-程序功能：
+程序功能：配置模块
 */
 
 var GlobalConfig *Config
@@ -66,6 +66,7 @@ type Config struct {
 	WorkerConfig   WorkerConfig
 	DBConfig       DBConfig
 	UserPassConfig UserPassConfig
+	NucleiPath     string
 }
 
 // 加载配置

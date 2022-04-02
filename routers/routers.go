@@ -3,6 +3,7 @@ package routers
 import (
 	"Beescan/controller"
 	"Beescan/core/log"
+	"Beescan/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,11 +16,26 @@ import (
 ////go:embed static templates
 //var content embed.FS
 
+type login struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+var identityKey = "id"
+
+// User demo
+type User struct {
+	UserName  string
+	FirstName string
+	LastName  string
+}
+
 func SetupRouter() *gin.Engine {
 
 	r := gin.Default()
 
 	r.Use(log.LoggerToFile())
+	r.Use(middleware.AuthMiddleWare())
 
 	// 告诉gin框架模板文件引用的静态文件去哪里找
 	r.Static("/public/static", "../routers/static")
@@ -29,12 +45,13 @@ func SetupRouter() *gin.Engine {
 	r.LoadHTMLGlob("../routers/templates/*")
 	//t := template.Must(template.New("").ParseFS(content, "templates/*"))
 	//r.SetHTMLTemplate(t)
-	// 初始访问
+
+	r.NoRoute(controller.Error)
 	r.GET("/", controller.LoginGet)
 
 	// 初始登录
 	r.GET("/login", controller.LoginGet)
-	r.POST("/login", controller.LoginPost, r.HandleContext)
+	r.POST("/login", controller.LoginPost)
 
 	// 首页
 	r.GET("/info", controller.InfoGet)
@@ -61,12 +78,6 @@ func SetupRouter() *gin.Engine {
 
 	// 漏洞详情页面
 	r.GET("/vuldetail", controller.VulDetail)
-
-	// POC管理
-	r.GET("/poc", controller.PocGet)
-	r.POST("/poc/add", controller.PocAdd)
-	r.POST("/poc/delete", controller.PocDelete)
-	r.POST("/poc/search", controller.PocSearch)
 
 	// 日志管理
 	r.GET("/logs", controller.LogsGet)

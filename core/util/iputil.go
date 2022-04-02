@@ -11,9 +11,8 @@ import (
 /*
 创建人员：云深不知处
 创建时间：2022/1/3
-程序功能：
+程序功能：ip判断
 */
-
 
 // IsIP checks if a string is either IP version 4 or 6. Alias for `net.ParseIP`
 func IsIP(str string) bool {

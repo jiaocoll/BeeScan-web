@@ -9,6 +9,7 @@ import (
 	"Beescan/core/scan/hostinfo"
 	"Beescan/core/util"
 	"Beescan/utils"
+	"encoding/base64"
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
@@ -30,22 +31,24 @@ import (
 创建时间：2022/1/3
 程序功能：控制器
 */
+
 var (
-	nowtime    string
-	hostip     string
-	hostinfos  *host.InfoStat
-	parts      hostinfo.Parts
-	cpuinfos   hostinfo.CpuInfo
-	mempercent float64
-	meminfos   hostinfo.MemInfo
-	netinfos   []net.IOCountersStat
-	netspeed   []hostinfo.SpeedInfo
-	conn       *redis.Client
-	nodesstate []db.NodeState
-	tasksstate []db.TaskState
-	nodenames  []string
-	tasknames  []string
-	es         *elastic.Client
+	nowtime     string
+	hostip      string
+	hostinfos   *host.InfoStat
+	parts       hostinfo.Parts
+	cpuinfos    hostinfo.CpuInfo
+	mempercent  float64
+	meminfos    hostinfo.MemInfo
+	netinfos    []net.IOCountersStat
+	netspeed    []hostinfo.SpeedInfo
+	conn        *redis.Client
+	nodesstate  []db.NodeState
+	tasksstate  []db.TaskState
+	nodenames   []string
+	tasknames   []string
+	es          *elastic.Client
+	CookieValue string
 )
 
 type Page struct {
@@ -78,6 +81,7 @@ func init() {
 	var err error
 	conn = db.RedisInit()
 	es = db.ElasticSearchInit(config.GlobalConfig.DBConfig.Elasticsearch.Host, config.GlobalConfig.DBConfig.Elasticsearch.Port)
+	CookieValue = base64.StdEncoding.EncodeToString([]byte(config.GlobalConfig.UserPassConfig.UserName + "-" + config.GlobalConfig.UserPassConfig.PassWord + "-" + util.RandomAlphanumeric(20)))
 	hostip = hostinfo.GetLocalIP()
 	hostinfos, err = hostinfo.GetHostInfo()
 	if err != nil {
@@ -102,9 +106,21 @@ func LoginPost(c *gin.Context) {
 	password := c.PostForm("password")
 	//查询数据库，如果正确跳转，否则不跳转
 	if username == config.GlobalConfig.UserPassConfig.UserName && password == config.GlobalConfig.UserPassConfig.PassWord {
-		c.Request.URL.Path = "/info"
-	}
+		BeescanCookie := &http.Cookie{
+			Name:     "Beescan",
+			Value:    CookieValue,
+			HttpOnly: true,
+			MaxAge:   3600,
+		}
+		c.Writer.Header().Set("Set-Cookie", BeescanCookie.String())
+		//c.Request.URL.Path = "/info"
+		info := "http://" + c.Request.Host + "/info"
+		c.Redirect(http.StatusMovedPermanently, info)
 
+	} else {
+		c.HTML(http.StatusOK, "login.html", gin.H{"msg": "账号或密码不对！"})
+		return
+	}
 }
 
 // InfoGet 本机信息
@@ -697,4 +713,9 @@ func InfoInit() {
 	}
 	netspeed = hostinfo.GetNetSpeed()
 
+}
+
+// 404页面
+func Error(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "404.html", gin.H{})
 }

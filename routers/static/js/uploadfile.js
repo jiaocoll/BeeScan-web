@@ -4,6 +4,12 @@ $(function (){
         alert(f)
     }
 })
+$(function (){
+    var a = document.getElementById("loginmsg").value;
+    if (a != ""){
+        alert(a)
+    }
+})
 function Uploadfile() {
     $("#pocfile").click();
     $("#pocfile").change(function (){

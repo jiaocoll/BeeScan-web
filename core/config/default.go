@@ -3,7 +3,7 @@ package config
 /*
 创建人员：云深不知处
 创建时间：2022/1/16
-程序功能：
+程序功能：默认配置
 */
 
 var defaultYamlByte = []byte(`
@@ -38,5 +38,7 @@ UserPassConfig:
   UserName: admin
   PassWord: admin
 
+# nuclei路径
+NucleiPath: /Users/ameng/Tools/nuclei/nuclei
 
 `)
