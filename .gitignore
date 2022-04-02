@@ -1,4 +1,3 @@
 dist/
-dist/
-dist/
-dist/
+.DS_Store
+.idea/
