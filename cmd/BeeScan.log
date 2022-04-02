@@ -3305,3 +3305,7 @@
 {"client_ip":"127.0.0.1","latency_time":51916,"level":"info","msg":"","req_method":"GET","req_uri":"/infoa","status_code":404,"time":"2022-04-02 09:17:21"}
 {"client_ip":"127.0.0.1","latency_time":306798,"level":"info","msg":"","req_method":"GET","req_uri":"/infoa","status_code":404,"time":"2022-04-02 09:21:09"}
 {"client_ip":"127.0.0.1","latency_time":27385,"level":"info","msg":"","req_method":"GET","req_uri":"/infoa","status_code":404,"time":"2022-04-02 09:21:10"}
+{"client_ip":"127.0.0.1","latency_time":469870,"level":"info","msg":"","req_method":"GET","req_uri":"/","status_code":200,"time":"2022-04-02 09:51:48"}
+{"client_ip":"127.0.0.1","latency_time":148858,"level":"info","msg":"","req_method":"GET","req_uri":"/public/static/js/uploadfile.js","status_code":304,"time":"2022-04-02 09:51:48"}
+{"client_ip":"127.0.0.1","latency_time":116786,"level":"info","msg":"","req_method":"GET","req_uri":"/Aaa","status_code":404,"time":"2022-04-02 09:51:55"}
+{"client_ip":"127.0.0.1","latency_time":13629,"level":"info","msg":"","req_method":"GET","req_uri":"/Aaa","status_code":404,"time":"2022-04-02 09:51:59"}
