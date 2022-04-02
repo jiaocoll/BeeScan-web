@@ -13,9 +13,7 @@ NodeConfig:
   NodeNames:
     BeeScan_node_1,
     BeeScan_node_2,
-    BeeScan_node_3,
-    BeeScan_node_4,
-    BeeScan_node_5
+    BeeScan_node_3
 
 # 数据库配置
 DBConfig:
@@ -35,8 +33,8 @@ DBConfig:
 
 # web端账号密码配置
 UserPassConfig:
-  UserName: admin
-  PassWord: admin
+  UserName: Ameng
+  PassWord: Ameng
 
 # nuclei路径
 NucleiPath: /Users/ameng/Tools/nuclei/nuclei
