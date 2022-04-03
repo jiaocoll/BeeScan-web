@@ -4,7 +4,10 @@ import (
 	"Beescan/controller"
 	"Beescan/core/log"
 	"Beescan/middleware"
+	"embed"
 	"github.com/gin-gonic/gin"
+	"html/template"
+	"net/http"
 )
 
 /*
@@ -13,8 +16,8 @@ import (
 程序功能：路由
 */
 
-////go:embed static templates
-//var content embed.FS
+//go:embed static templates
+var content embed.FS
 
 type login struct {
 	Username string `form:"username" json:"username" binding:"required"`
@@ -38,13 +41,13 @@ func SetupRouter() *gin.Engine {
 	r.Use(middleware.AuthMiddleWare())
 
 	// 告诉gin框架模板文件引用的静态文件去哪里找
-	r.Static("/public/static", "../routers/static")
-	//r.StaticFS("/public", http.FS(content))
+	//r.Static("/public/static", "../routers/static")
+	r.StaticFS("/public", http.FS(content))
 
 	// 告诉gin框架去哪里找模板文件
 	r.LoadHTMLGlob("../routers/templates/*")
-	//t := template.Must(template.New("").ParseFS(content, "templates/*"))
-	//r.SetHTMLTemplate(t)
+	t := template.Must(template.New("").ParseFS(content, "templates/*"))
+	r.SetHTMLTemplate(t)
 
 	r.NoRoute(controller.Error)
 	r.GET("/", controller.LoginGet)

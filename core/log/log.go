@@ -1,6 +1,7 @@
 package log
 
 import (
+	"Beescan/core/config"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -22,7 +23,12 @@ func LoggerToFile() gin.HandlerFunc {
 
 	//日志文件
 	fileName := path.Join(logFilePath, logFileName)
-
+	if !config.Exists(fileName) {
+		_, err := os.Create(fileName)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 	//写入文件
 	src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
