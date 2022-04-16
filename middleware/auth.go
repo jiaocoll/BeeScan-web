@@ -11,7 +11,7 @@ import (
 /*
 创建人员：云深不知处
 创建时间：2022/4/1
-程序功能：
+程序功能：中间件登录验证
 */
 var cookieValue = base64.StdEncoding.EncodeToString([]byte(config.GlobalConfig.UserPassConfig.UserName + "-" + config.GlobalConfig.UserPassConfig.PassWord))
 

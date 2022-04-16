@@ -451,7 +451,7 @@ func ScanPost(c *gin.Context) {
 			if err1 != nil {
 				log.Println("[ADDJob]:", err1)
 			}
-			db.TaskRegister(conn, TaskName, strconv.Itoa(len(tmpnum)-2))
+			db.TaskRegister(conn, TaskName, strconv.Itoa(len(tmpnum)-1))
 		}
 	}
 
