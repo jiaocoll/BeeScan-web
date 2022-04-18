@@ -36,7 +36,18 @@ UserPassConfig:
   UserName: Ameng
   PassWord: Ameng
 
-# nuclei路径
-NucleiPath: /Users/ameng/Tools/nuclei/nuclei
+# Nuclei
+NucleiConfig:
+  # 是否启动
+  Enable: true
+  # nuclei路径
+  NucleiPath: /Users/ameng/Tools/nuclei/nuclei
+
+# Xray
+XrayConfig:
+  # 是否启用
+  Enable: true
+  # xray路径
+  XrayPath: /Users/ameng/Tools/xray/xray_darwin_amd64
 
 `)

@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"github.com/olivere/elastic/v7"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -33,10 +34,13 @@ func ReadLine(es *elastic.Client, fileName string, handler func(string) scan.Nuc
 		}
 		if err != nil {
 			if err == io.EOF {
+				err1 := f.Close()
+				if err1 != nil {
+					log.Println("Close file:", err1)
+				}
 				return nil
 			}
 			return err
 		}
 	}
-	return nil
 }

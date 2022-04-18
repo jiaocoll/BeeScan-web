@@ -60,13 +60,24 @@ type UserPassConfig struct {
 	PassWord string
 }
 
+type NucleiConfig struct {
+	Enable     bool
+	NucleiPath string
+}
+
+type XrayConfig struct {
+	Enable   bool
+	XrayPath string
+}
+
 type Config struct {
 	NodeConfig     NodeConfig
 	DicConfig      DicConfig
 	WorkerConfig   WorkerConfig
 	DBConfig       DBConfig
 	UserPassConfig UserPassConfig
-	NucleiPath     string
+	NucleiConfig   NucleiConfig
+	XrayConfig     XrayConfig
 }
 
 // 加载配置

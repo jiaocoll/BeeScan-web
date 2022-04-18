@@ -42,24 +42,37 @@ type Info struct {
 	Severity    string      `json:"severity"`
 }
 
-func VulnScan(targets []string) {
-	// Print Go Version
+func VulnScan(targets []string, xrayfile string) {
 	var args []string
 	dirpath := util.GetCurrentDirectory()
 	filepath := dirpath + "/vulns.txt"
-	args = append(args, "-u")
-	args = append(args, targets...)
-	args = append(args, "-severity")
-	args = append(args, "critical,medium,high")
-	args = append(args, "-t")
-	//args = append(args, "/Users/ameng/nuclei-templates/dns/txt-fingerprint.yaml")
-	args = append(args, "-json")
-	args = append(args, "-o")
-	args = append(args, filepath)
-	cmd := exec.Command(config.GlobalConfig.NucleiPath, args...)
-	err := cmd.Run()
-	if err != nil {
-		fmt.Print("VulnScan", err)
+	if config.GlobalConfig.NucleiConfig.Enable {
+		args = append(args, "-u")
+		args = append(args, targets...)
+		args = append(args, "-severity")
+		args = append(args, "critical,medium,high")
+		args = append(args, "-t")
+		args = append(args, "-json")
+		args = append(args, "-o")
+		args = append(args, filepath)
+		cmd := exec.Command(config.GlobalConfig.NucleiConfig.NucleiPath, args...)
+		err := cmd.Run()
+		if err != nil {
+			fmt.Print("VulnScan", err)
+		}
+	}
+	xrayfilepath := dirpath + "/xray-" + time.Now().Format("2006-01-02 15:04:05")
+	if config.GlobalConfig.XrayConfig.Enable {
+		args = append(args, "webscan")
+		args = append(args, "--url-file")
+		args = append(args, xrayfile)
+		args = append(args, "--html-output")
+		args = append(args, xrayfilepath)
+		cmd := exec.Command(config.GlobalConfig.XrayConfig.XrayPath, args...)
+		err := cmd.Run()
+		if err != nil {
+			fmt.Print("VulnScan", err)
+		}
 	}
 
 }

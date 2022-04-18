@@ -621,7 +621,22 @@ func VulPost(c *gin.Context) {
 		for _, v := range ouputs {
 			targets = append(targets, v.Target)
 		}
-		scan.VulnScan(targets)
+		xraytargetsfile := util.GetCurrentDirectory() + "xray-targets.txt"
+		xrayfile, err := os.Create(xraytargetsfile)
+		if err != nil {
+			log.Println(err)
+		}
+		for _, v := range targets {
+			_, err = xrayfile.WriteString(v + "/n")
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		err = xrayfile.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		scan.VulnScan(targets, xraytargetsfile)
 		dirpath := util.GetCurrentDirectory()
 		filepath := dirpath + "/vulns.txt"
 		if config.Exists(filepath) {
@@ -630,6 +645,13 @@ func VulPost(c *gin.Context) {
 				log.Println("ReadLine", err)
 			}
 			err = os.Remove(filepath)
+			if err != nil {
+				log.Println("RemoveFile", err)
+			}
+		}
+
+		if config.Exists(xraytargetsfile) {
+			err = os.Remove(xraytargetsfile)
 			if err != nil {
 				log.Println("RemoveFile", err)
 			}
