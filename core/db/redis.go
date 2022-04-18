@@ -108,7 +108,10 @@ func GetNodeStates(c *redis.Client, nodenames []string) []NodeState {
 
 	for _, v := range nodenames {
 		if v != "" {
-			nodestates = append(nodestates, GetNodeState(c, v))
+			nodestate := GetNodeState(c, v)
+			if nodestate.State != "Invalid" {
+				nodestates = append(nodestates, nodestate)
+			}
 		}
 	}
 	return nodestates

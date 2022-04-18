@@ -268,7 +268,7 @@ func AssetsPost(c *gin.Context) {
 	c.HTML(http.StatusOK, "assets.html", gin.H{"outputs": ""})
 }
 
-// 资产导出
+// AssetsExport 资产导出
 func AssetsExport(c *gin.Context) {
 	searchstr := c.Query("search")
 	file, err := utils.GetdataTocsv(db.QueryToExport(es, searchstr))
@@ -692,11 +692,6 @@ func VulDetail(c *gin.Context) {
 	c.HTML(http.StatusOK, "vuldetail.html", gin.H{"output": output, "vuls": vuls})
 }
 
-// PocGet POC管理
-func PocGet(c *gin.Context) {
-	c.HTML(http.StatusOK, "poc.html", nil)
-}
-
 // LogsGet 日志管理
 func LogsGet(c *gin.Context) {
 	var logs []byte
@@ -737,7 +732,7 @@ func InfoInit() {
 
 }
 
-// 404页面
+// Error 404页面
 func Error(c *gin.Context) {
 	c.HTML(http.StatusNotFound, "404.html", gin.H{})
 }
