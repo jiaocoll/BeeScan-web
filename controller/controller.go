@@ -43,10 +43,9 @@ var (
 	netinfos    []net.IOCountersStat
 	netspeed    []hostinfo.SpeedInfo
 	conn        *redis.Client
-	nodesstate  []db.NodeState
+	nodesstate  []*db.NodeState
 	tasksstate  []db.TaskState
 	nodenames   []string
-	tasknames   []string
 	es          *elastic.Client
 	CookieValue string
 )
@@ -375,7 +374,7 @@ func SingleAssetsDetail(c *gin.Context) {
 // ScanGet 资产探测
 func ScanGet(c *gin.Context) {
 	nodesstate = db.GetNodeStates(conn, config.GlobalConfig.NodeConfig.NodeNames)
-	tasksstate = db.GetTaskStates(conn, tasknames)
+	tasksstate = db.GetTaskStates(conn)
 	var tasks int
 	var running int
 	var finished int
@@ -414,6 +413,7 @@ func ScanPost(c *gin.Context) {
 
 			NodeQueue := NodeName + "_queue"
 			TargetsHosts = util.Removesamesip(TargetsHosts)
+			tasknames := db.GetTasknames(conn)
 			if TaskName == "" {
 				TaskName = "BeeScan_task_1"
 				if !util.In(TaskName, tasknames) {
@@ -451,12 +451,12 @@ func ScanPost(c *gin.Context) {
 			if err1 != nil {
 				log.Println("[ADDJob]:", err1)
 			}
-			db.TaskRegister(conn, TaskName, strconv.Itoa(len(tmpnum)-1))
+			db.TaskRegisterAndUpdate(conn, TaskName, strconv.Itoa(len(tmpnum)-1))
 		}
 	}
 
 	nodesstate = db.GetNodeStates(conn, config.GlobalConfig.NodeConfig.NodeNames)
-	tasksstate = db.GetTaskStates(conn, tasknames)
+	tasksstate = db.GetTaskStates(conn)
 
 	var tasks int
 	var running int
@@ -488,7 +488,7 @@ func TaskDelete(c *gin.Context) {
 		db.DelTask(conn, name)
 	}
 	nodesstate = db.GetNodeStates(conn, config.GlobalConfig.NodeConfig.NodeNames)
-	tasksstate = db.GetTaskStates(conn, tasknames)
+	tasksstate = db.GetTaskStates(conn)
 	var tasks int
 	var running int
 	var finished int

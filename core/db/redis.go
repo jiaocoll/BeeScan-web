@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -25,6 +26,7 @@ type NodeState struct {
 	LastTime    string
 	RunTime     string
 	State       string
+	StartTime   string
 }
 
 type TaskState struct {
@@ -47,6 +49,7 @@ func RedisInit() *redis.Client {
 		Addr:     addr,
 		Password: config.GlobalConfig.DBConfig.Redis.Password, // no password set
 		DB:       db,                                          // use default DB
+		PoolSize: 100,
 	})
 	Pong, err := conn.Ping().Result()
 	if err != nil {
@@ -68,12 +71,13 @@ func AddJob(c *redis.Client, data []byte, NodeName string) error {
 }
 
 // GetNodeState 获取节点运行情况
-func GetNodeState(c *redis.Client, NodeName string) NodeState {
-	var nodestate NodeState
+func GetNodeState(c *redis.Client, NodeName string) *NodeState {
+	nodestate := &NodeState{}
+
 	tasks := c.HGet(NodeName, "tasks").Val()
 	running := c.HGet(NodeName, "running").Val()
 	finished := c.HGet(NodeName, "finished").Val()
-	runtime := c.HGet(NodeName, "runtime").Val()
+	starttime := c.HGet(NodeName, "starttime").Val()
 	nowstate := c.HGet(NodeName, "state").Val()
 	lasttime := c.HGet(NodeName, "lasttime").Val()
 
@@ -83,7 +87,8 @@ func GetNodeState(c *redis.Client, NodeName string) NodeState {
 	nodestate.Finished = finished
 	nodestate.LastTime = lasttime
 	nodestate.State = nowstate
-	nodestate.RunTime = runtime + "小时"
+	nodestate.StartTime = starttime
+
 	tmpfinished, _ := strconv.Atoi(finished)
 	tmptasks, _ := strconv.Atoi(tasks)
 	if tmpfinished == 0 {
@@ -98,19 +103,19 @@ func GetNodeState(c *redis.Client, NodeName string) NodeState {
 	if nowtime.Sub(dt).Minutes() > 5 {
 		nodestate.State = "Invalid"
 	}
-
+	dtRuntime, _ := time.ParseInLocation("2006-01-02 15:04:05", nodestate.StartTime, loc)
+	nodestate.RunTime = strconv.Itoa(int(nowtime.Sub(dtRuntime).Hours())) + "小时"
 	return nodestate
 }
 
 // GetNodeStates 得到节点队列
-func GetNodeStates(c *redis.Client, nodenames []string) []NodeState {
-	var nodestates []NodeState
-
+func GetNodeStates(c *redis.Client, nodenames []string) []*NodeState {
+	var nodestates []*NodeState
 	for _, v := range nodenames {
-		if v != "" {
-			nodestate := GetNodeState(c, v)
-			if nodestate.State != "Invalid" {
-				nodestates = append(nodestates, nodestate)
+		if strings.TrimSpace(v) != "" {
+			tmpnodestate := GetNodeState(c, strings.TrimSpace(v))
+			if tmpnodestate.State != "Invalid" {
+				nodestates = append(nodestates, tmpnodestate)
 			}
 		}
 	}
@@ -135,7 +140,7 @@ func GetTaskState(c *redis.Client, TaskName string) TaskState {
 	taskstate.TargetNum = targetnum
 
 	tmpfinished, _ := strconv.Atoi(finished)
-	tmptasks, _ := strconv.Atoi(tasks)
+	tmptasks, _ := strconv.Atoi(targetnum)
 
 	if tmpfinished == 0 {
 		taskstate.ScanPercent = "0"
@@ -147,9 +152,9 @@ func GetTaskState(c *redis.Client, TaskName string) TaskState {
 }
 
 // GetTaskStates 得到任务队列
-func GetTaskStates(c *redis.Client, tasknames []string) []TaskState {
+func GetTaskStates(c *redis.Client) []TaskState {
 	var taskstates []TaskState
-
+	tasknames := c.SMembers("tasknames").Val()
 	for _, v := range tasknames {
 		if v != "" {
 			taskstates = append(taskstates, GetTaskState(c, v))
@@ -159,17 +164,28 @@ func GetTaskStates(c *redis.Client, tasknames []string) []TaskState {
 }
 
 // DelTask 删除任务
-func DelTask(c *redis.Client, tasknames string) {
-	c.Del(tasknames)
+func DelTask(c *redis.Client, taskname string) {
+	c.Del(taskname)
+	c.SRem("tasknames", taskname)
+}
+
+// 获取任务
+func GetTasknames(c *redis.Client) []string {
+	tasknames := c.SMembers("tasknames").Val()
+	return tasknames
 }
 
 // 任务注册
-func TaskRegister(c *redis.Client, taskname string, tasknum string) {
+func TaskRegisterAndUpdate(c *redis.Client, taskname string, tasknum string) {
+	Evertasks, _ := strconv.Atoi(c.HGet(taskname, "tasks").Val())
+	Inttasknum, _ := strconv.Atoi(tasknum)
+	Nowtasks := strconv.Itoa(Evertasks + Inttasknum)
 	state = make(map[string]interface{})
-	state["tasks"] = tasknum
+	state["tasks"] = Nowtasks
 	state["running"] = 0
 	state["finished"] = 0
 	state["targetnum"] = tasknum
 	state["lasttime"] = time.Now().Format("2006-01-02 15:04:05")
 	c.HMSet(taskname, state)
+	c.SAdd("tasknames", taskname)
 }

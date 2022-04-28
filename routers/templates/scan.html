@@ -178,7 +178,8 @@ BeeScan.com
                     <thead>
                     <tr>
                       <th>任务名称</th>
-                      <th>目标数</th>
+                      <th>任务总目标数</th>
+                      <th>本次目标数</th>
                       <th>任务进度</th>
                       <th>操作</th>
                     </tr>
@@ -187,6 +188,7 @@ BeeScan.com
                     {{range .TaskStates}}
                     <tr>
                       <td>{{.Name}}</td>
+                      <td>{{.Tasks}}</td>
                       <td>{{.TargetNum}}</td>
                       <td>
                         <div class="progress progress-striped active bg-gray-400">
