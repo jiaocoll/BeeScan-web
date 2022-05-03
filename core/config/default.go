@@ -11,9 +11,9 @@ var defaultYamlByte = []byte(`
 NodeConfig:
   # 节点名称配置
   NodeNames:
-    BeeScan_node_1,
-    BeeScan_node_2,
-    BeeScan_node_3
+    - BeeScan_node_1
+    - BeeScan_node_2
+    - BeeScan_node_3
 
 # 数据库配置
 DBConfig:
