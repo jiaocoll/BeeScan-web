@@ -118,13 +118,17 @@ Output the detailed information of the host currently running the display termin
 
 ### Asset display page
 
-![image-20220402204625380](img/image-20220402204625380.png)
+![image-20220604111354131](img/image-20220604111354131.png)
 
 ### Task Publishing and Node Status Pages
 
-![image-20220402204640687](img/image-20220402204640687.png)
+![资产探测1](img/资产探测1.png)
 
-![image-20220402204653187](img/image-20220402204653187.png)
+![image-20220604111848138](img/image-20220604111848138.png)
+
+![image-20220604111613416](img/image-20220604111613416.png)
+
+![image-20220604111905824](img/image-20220604111905824.png)
 
 ### Vulnerability Scanning Page
 
