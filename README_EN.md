@@ -139,6 +139,14 @@ Output the detailed information of the host currently running the display termin
 
 ![image-20220604111354131](img/image-20220604111354131.png)
 
+### Asset Details Page
+
+![image-20220620110148156](img/image-20220620110148156.png)
+
+![image-20220620110201064](img/image-20220620110201064.png)
+
+![image-20220620110210515](img/image-20220620110210515.png)
+
 ### Task Publishing and Node Status Pages
 
 ![Asset Detection 1](img/Asset Detection 1.png)
