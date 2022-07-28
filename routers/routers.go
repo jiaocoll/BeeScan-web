@@ -45,7 +45,7 @@ func SetupRouter() *gin.Engine {
 	r.StaticFS("/public", http.FS(content))
 
 	// 告诉gin框架去哪里找模板文件
-	r.LoadHTMLGlob("../routers/templates/*")
+	//r.LoadHTMLGlob("../routers/templates/*")
 	t := template.Must(template.New("").ParseFS(content, "templates/*"))
 	r.SetHTMLTemplate(t)
 
