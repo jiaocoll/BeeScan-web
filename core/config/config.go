@@ -130,7 +130,7 @@ func ReadYamlConfig(configFile string) {
 		fmt.Fprintln(color.Output, color.HiRedString("[ERRO]"), "["+time.Now().Format("2006-01-02 15:04:05")+"]", "[config_Setup]:fail to parse 'config.yaml', check format:", err)
 		os.Exit(1)
 	}
-
+	
 }
 
 func WriteYamlConfig(configFile string) {
