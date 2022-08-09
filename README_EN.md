@@ -93,13 +93,11 @@ Output the detailed information of the host currently running the display termin
 
 - Multi-method detection (ICMP, Ping, HTTP)
 
-    ![image-20220613111212533](img/image-20220613111212533.png)
 
 ### Port detection
 
 - tcp/udp
 
-    ![image-20220613111235260](img/image-20220613111235260.png)
 
 ### Service identification
 
@@ -111,13 +109,11 @@ Output the detailed information of the host currently running the display termin
 
 - Rich fingerprint library
 
-    ![image-20220613111329998](img/image-20220613111329998.png)
 
 ### Regular scan
 
 - Regularly scan old assets in the database that exceed a certain period of time to ensure the timeliness of assets
 
-    ![image-20220613111149632](img/image-20220613111149632.png)
 
 ### IP attribution information
 
@@ -194,7 +190,7 @@ Before installing and using this tool, please **must read carefully and fully un
 - [ ] Improve the front-end page and use Vue for reconstruction
 - [ ] Improve node monitoring, and consider using mature message queues in the future
 - [ ] Improve the scanning logic and scanning effect of the scanning terminal, and add a fingerprint database of your own
-- [ ] Improve the vulnerability detection function, call the POC of nuclei and xray instead of calling nuclei or xray (the focus of the project is not on vulnerability detection, but on asset detection and service identification, and will focus on exploring more underlying asset detection technologies, and not just calling the fingerprint library)
+- [ ] optimize concurrency
 
 ## refer to
 
