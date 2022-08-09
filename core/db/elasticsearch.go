@@ -188,7 +188,7 @@ func (x Result) IsStructureEmpty() bool {
 
 func ElasticSearchInit(ip string, port string) *elastic.Client {
 	host := "http://" + ip + ":" + port
-	client, err := elastic.NewClient(elastic.SetURL(host), elastic.SetSniff(false))
+	client, err := elastic.NewClient(elastic.SetURL(host), elastic.SetBasicAuth(config.GlobalConfig.DBConfig.Elasticsearch.Username, config.GlobalConfig.DBConfig.Elasticsearch.Password), elastic.SetSniff(false))
 	if err != nil {
 		fmt.Fprintln(color.Output, color.HiRedString("[ERRO]"), "[ElasticSearchInit]:", err)
 		os.Exit(1)
